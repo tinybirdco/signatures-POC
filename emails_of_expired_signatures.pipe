@@ -1,0 +1,13 @@
+DESCRIPTION >
+	Retrieve the email addresses of all accounts with expired signatures:
+
+
+NODE emails_of_expired_signatures_0
+SQL >
+
+    SELECT a.email
+    FROM accounts AS a
+    JOIN signatures AS s ON a.account_id = s.account_id
+    WHERE s.status = 'expired'
+
+

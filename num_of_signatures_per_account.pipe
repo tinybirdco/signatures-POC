@@ -1,0 +1,14 @@
+DESCRIPTION >
+	Count the number of signatures per account in descending order (from highest to lowest)
+
+
+NODE num_of_signatures_per_account_0
+SQL >
+
+    SELECT account_id, COUNT(*) AS signature_count
+    FROM signatures
+    GROUP BY account_id
+    ORDER BY signature_count DESC
+    LIMIT 100
+
+

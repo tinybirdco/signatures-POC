@@ -1,0 +1,12 @@
+DESCRIPTION >
+	Count the number of certified SMS and certified email accounts:
+
+
+NODE num_of_certified_accounts_0
+SQL >
+
+    SELECT certified_SMS, certified_email, COUNT(*) AS count
+    FROM accounts
+    GROUP BY certified_SMS, certified_email
+
+

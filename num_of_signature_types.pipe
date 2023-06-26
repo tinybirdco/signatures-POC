@@ -1,0 +1,10 @@
+DESCRIPTION >
+	Retrieve the signature types and their counts:
+
+
+NODE num_of_signature_types_0
+SQL >
+
+    SELECT signatureType, COUNT(*) AS count FROM signatures GROUP BY signatureType
+
+

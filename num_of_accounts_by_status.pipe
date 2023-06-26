@@ -1,0 +1,8 @@
+NODE num_of_accounts_by_status_0
+SQL >
+
+    SELECT status, COUNT(*) AS count
+    FROM accounts
+    GROUP BY status
+
+

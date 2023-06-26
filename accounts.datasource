@@ -1,0 +1,14 @@
+
+SCHEMA >
+    `account_id` Int32 `json:$.account_id`,
+    `certified_SMS` UInt8 `json:$.certified_SMS`,
+    `certified_email` UInt8 `json:$.certified_email`,
+    `email` String `json:$.email`,
+    `person` String `json:$.person`,
+    `phone` String `json:$.phone`,
+    `photo_id_certified` UInt8 `json:$.photo_id_certified`,
+    `role` String `json:$.role`,
+    `status` String `json:$.status`
+
+ENGINE "MergeTree"
+ENGINE_SORTING_KEY "account_id, photo_id_certified, role, status"

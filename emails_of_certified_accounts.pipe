@@ -1,0 +1,12 @@
+DESCRIPTION >
+	Retrieve the email addresses and roles of all certified SMS accounts:
+
+
+NODE emails_of_certified_accounts_0
+SQL >
+
+    SELECT email, role
+    FROM accounts
+    WHERE certified_SMS = 1
+
+

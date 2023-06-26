@@ -1,0 +1,13 @@
+DESCRIPTION >
+	Retrieve the account details of the person with the most recent signature:
+
+
+NODE most_recent_signature_0
+SQL >
+
+    SELECT a.*
+    FROM accounts AS a
+    JOIN signatures AS s ON a.account_id = s.account_id
+    WHERE s.until = (SELECT MAX(until) FROM signatures)
+
+
