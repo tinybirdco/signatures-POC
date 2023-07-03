@@ -1,3 +1,5 @@
+TOKEN "num_of_accounts_by_status_endpoint_read_5614" READ
+
 NODE num_of_accounts_by_status_0
 SQL >
 

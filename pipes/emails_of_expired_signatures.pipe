@@ -2,6 +2,8 @@ DESCRIPTION >
 	Retrieve the email addresses of all accounts with expired signatures:
 
 
+TOKEN "emails_of_expired_signatures_endpoint_read_4335" READ
+
 NODE emails_of_expired_signatures_0
 SQL >
 

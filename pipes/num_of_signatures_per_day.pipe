@@ -1,0 +1,16 @@
+DESCRIPTION >
+	a query to show number of signatures per day
+
+
+TOKEN "num_of_signatures_per_day_endpoint_read_4461" READ
+
+NODE num_of_signatures_per_day_0
+SQL >
+
+    SELECT DATE_TRUNC('day', since) AS date,
+           COUNT(*) AS signature_count
+    FROM signatures
+    GROUP BY date
+    ORDER BY date
+
+

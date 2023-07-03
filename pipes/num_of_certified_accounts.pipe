@@ -2,6 +2,8 @@ DESCRIPTION >
 	Count the number of certified SMS and certified email accounts:
 
 
+TOKEN "num_of_certified_accounts_endpoint_read_0137" READ
+
 NODE num_of_certified_accounts_0
 SQL >
 

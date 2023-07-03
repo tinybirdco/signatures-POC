@@ -2,6 +2,8 @@ DESCRIPTION >
 	Retrieve the email addresses and roles of all certified SMS accounts:
 
 
+TOKEN "emails_of_certified_accounts_endpoint_read_2079" READ
+
 NODE emails_of_certified_accounts_0
 SQL >
 

@@ -2,6 +2,8 @@ DESCRIPTION >
 	Retrieve the signature types and their counts:
 
 
+TOKEN "num_of_signature_types_endpoint_read_5348" READ
+
 NODE num_of_signature_types_0
 SQL >
 

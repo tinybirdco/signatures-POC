@@ -2,6 +2,8 @@ DESCRIPTION >
 	Retrieve the account details of the person with the most recent signature:
 
 
+TOKEN "most_recent_signature_endpoint_read_9347" READ
+
 NODE most_recent_signature_0
 SQL >
 
