@@ -1,0 +1,24 @@
+DESCRIPTION >
+	Get account information based on an email address
+
+
+TOKEN "account_info_by_email_address_endpoint_read_2371" READ
+
+NODE account_info_by_email_address_0
+SQL >
+
+    %
+    SELECT *
+    FROM accounts
+    WHERE
+        email
+        = {{
+            String(
+                email,
+                description="The email address of the user you want account info for",
+                required=False,
+                default='Bridie.Hand14@yahoo.com',
+            )
+        }}
+
+

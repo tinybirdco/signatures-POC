@@ -1,0 +1,10 @@
+TOKEN "num_of_signatures_by_status_endpoint_read_5244" READ
+
+NODE num_of_signatures_by_status_0
+SQL >
+
+    SELECT status, COUNT(*) AS status_count
+    FROM signatures
+    GROUP BY status
+
+
