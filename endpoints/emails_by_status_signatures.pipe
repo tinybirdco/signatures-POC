@@ -1,0 +1,56 @@
+DESCRIPTION >
+	Retrieve the number of accounts based on the status of their signature. Possible status: "in_queue", "ready", "signing", "completed", "expired", "canceled", "declined", "error".
+
+
+TOKEN "emails_of_expired_signatures_endpoint_read_4335" READ
+
+NODE emails_by_status_signatures_0
+DESCRIPTION >
+    Count of the number of signatures per status, regardless of whether they are associated with an account.
+
+SQL >
+
+    %
+    SELECT s.status, COUNT(*) AS status_count
+    FROM signatures AS s
+    -- "in_queue", "ready", "signing", "completed", "expired", "canceled",
+    -- "declined", "error".
+    WHERE
+        s.status
+        = {{
+            String(
+                status,
+                description="The type of signature status",
+                required=False,
+                default='signing',
+            )
+        }}
+    GROUP BY s.status
+
+
+
+NODE emails_by_status_signatures_1
+DESCRIPTION >
+    Count of the number of signatures per status that are associated with an account.
+
+SQL >
+
+    %
+    SELECT s.status, COUNT(*) AS status_count
+    FROM signatures AS s
+    JOIN accounts AS a ON s.account_id = a.account_id
+    -- "in_queue", "ready", "signing", "completed", "expired", "canceled",
+    -- "declined", "error".
+    WHERE
+        s.status
+        = {{
+            String(
+                status,
+                description="The type of signature status",
+                required=False,
+                default='signing',
+            )
+        }}
+    GROUP BY s.status
+
+

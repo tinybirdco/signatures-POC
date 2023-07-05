@@ -7,9 +7,15 @@ TOKEN "account_info_by_email_address_endpoint_read_2371" READ
 NODE account_info_by_email_address_0
 SQL >
 
+    SELECT * FROM accounts
+
+
+
+NODE endpoint
+SQL >
+
     %
-    SELECT *
-    FROM accounts
+    SELECT * FROM account_info_by_email_address_0
     WHERE
         email
         = {{
