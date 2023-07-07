@@ -110,32 +110,3 @@ const main = async () => {
 }
 
 await main();
-
-SELECT
-status,
-    count(id) as total_signatures,
-    (count(id) * 100 / (SELECT count(*) FROM signatures WHERE created_on BETWEEN {
-        {
-            String(
-                start_date,
-                description = "The start date",
-                required = False,
-            default='2023-06-26',
-            )
-        }
-} AND {
-    {
-        String(
-            end_date,
-            description = "The end date",
-            required = False,
-            default='2023-07-26',
-        )
-    }
-})) as percentage
-FROM
-signatures
-WHERE 
-  created_on BETWEEN < insert start date here > AND < insert end date here >
-    GROUP BY
-status
