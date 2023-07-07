@@ -1,0 +1,19 @@
+DESCRIPTION >
+	List of signatures about to expire. This endpoint can be used to trigger alerts.
+
+
+NODE untitled_pipe_7804_0
+SQL >
+
+    SELECT 
+      id, 
+      account_id, 
+      until 
+    FROM 
+      signatures 
+    WHERE 
+      until >= now() AND dateDiff('day', now(), until) <= 7 
+    ORDER BY 
+      until ASC
+
+

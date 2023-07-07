@@ -1,0 +1,18 @@
+DESCRIPTION >
+	Ranking of the top accounts creating signatures
+
+
+NODE ranking_of_top_accounts_creating_signatures_0
+SQL >
+
+    SELECT 
+      account_id, 
+      count(id) as total_signatures 
+    FROM 
+      signatures 
+    GROUP BY 
+      account_id 
+    ORDER BY 
+      total_signatures DESC
+
+

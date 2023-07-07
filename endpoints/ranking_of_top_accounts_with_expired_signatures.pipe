@@ -1,0 +1,20 @@
+DESCRIPTION >
+	Ranking of the top accounts having signatures expired:
+
+
+NODE ranking_of_top_accounts_with_expired_signatures_0
+SQL >
+
+    SELECT 
+      account_id, 
+      count(id) as expired_signatures 
+    FROM 
+      signatures 
+    WHERE 
+      status = 'expired' 
+    GROUP BY 
+      account_id 
+    ORDER BY 
+      expired_signatures DESC
+
+

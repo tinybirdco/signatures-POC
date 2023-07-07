@@ -1,0 +1,25 @@
+DESCRIPTION >
+	Total number of signatures along time
+
+
+NODE total_signatures_per_month_0
+DESCRIPTION >
+    Total number of signatures along time
+
+SQL >
+
+    SELECT 
+      toStartOfMonth(created_on) as month, 
+      count(id) as total_signatures, 
+      signatureType 
+    FROM 
+      signatures 
+    WHERE 
+      dateDiff('year', created_on, now()) <= 1 AND signatureType = "signatureType"
+    GROUP BY 
+      month, 
+      signatureType 
+    ORDER BY 
+      month DESC
+
+
