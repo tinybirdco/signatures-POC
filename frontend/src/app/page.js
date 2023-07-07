@@ -1,113 +1,259 @@
-import Image from 'next/image'
+"use client";
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import {
+    Card,
+    Title,
+    Grid,
+    Text,
+    Tab,
+    TabList,
+    TabGroup,
+    TabPanel,
+    TabPanels,
+    Bold,
+    ColGrid,
+    Flex,
+    ProgressBar,
+    BarChart,
+    LineChart,
+    Metric,
+    Table,
+    TableHead,
+    TableHeaderCell,
+    TableBody,
+    TableRow,
+    TableCell,
+    TextInput,
+    Select,
+    SelectItem,
+    MultiSelectBox,
+    MultiSelectBoxItem,
+    Icon
+} from '@tremor/react';
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+import { KeyIcon, CheckCircleIcon, ArrowTrendingDownIcon, ChartBarIcon, GlobeAmericasIcon } from '@heroicons/react/24/solid';
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+import { useState, useEffect } from 'react';
+import React from 'react';
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+export default function CommitDashboard() {
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
+    const [token, setToken] = useState('');
+    const [host, setHost] = useState('api.us-east.tinybird.co');
+    const [sort, setSort] = useState('processed');
+    const [selectedChart, setSelectedChart] = useState(1);
+    const [contract, setContract] = useState([{
+        "account_name": '',
+        "start_dt": '',
+        "end_dt": '',
+        "processed": 0,
+        "storage": 0
+    }]);
+    const [progressProcessed, setProgressProcessed] = useState([{
+        "actual": 0,
+        "commit": 0,
+        "percent": 0
+    }]);
+    const [progressStorage, setProgressStorage] = useState([{
+        "actual": 0,
+        "commit": 0,
+        "percent": 0
+    }]);
+    const [trendProcessed, setTrendProcessed] = useState([]);
+    const [trendStorage, setTrendStorage] = useState([]);
+    const [burndown, setBurndown] = useState([]);
+    const [tableProcessedStorage, setTableProcessedStorage] = useState([{
+        "name": '',
+        "processed_tb": 0,
+        "storage_tb": 0
+    }]);
+    const [wsFilter, setWsFilter] = useState('All');
+    const [workspaces, setWorkspaces] = useState([{
+        "id": '',
+        "name": ''
+    }])
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    let apiContract = `https://${host}/v0/pipes/card_contract.json?token=${token}`
+    let apiProgressProcessed = `https://${host}/v0/pipes/progress_processed.json?token=${token}&ws_param=${wsFilter}`
+    let apiProgressStorage = `https://${host}/v0/pipes/progress_storage.json?token=${token}&ws_param=${wsFilter}`
+    let apiTrendProcessed = `https://${host}/v0/pipes/trend_processed.json?token=${token}&ws_param=${wsFilter}`
+    let apiTrendStorage = `https://${host}/v0/pipes/trend_storage.json?token=${token}&ws_param=${wsFilter}`
+    let apiBurndown = `https://${host}/v0/pipes/burndown_processed.json?token=${token}&ws_param=${wsFilter}`
+    let apiTableProcessedStorage = `https://${host}/v0/pipes/table_processed_storage.json?token=${token}&sort=${sort}&ws_param=${wsFilter}`
+    let apiWorkspaceFilter = `https://${host}/v0/pipes/workspace_ui_filter.json?token=${token}`
+
+    const fetchTinybirdUrl = async (fetchUrl, setState) => {
+        console.log(fetchUrl);
+        const data = await fetch(fetchUrl)
+        const jsonData = await data.json();
+        setState(jsonData.data);
+    }
+
+    useEffect(() => {
+        fetchTinybirdUrl(apiContract, setContract)
+    }, [apiContract]);
+    useEffect(() => {
+        fetchTinybirdUrl(apiProgressProcessed, setProgressProcessed)
+    }, [apiProgressProcessed]);
+    useEffect(() => {
+        fetchTinybirdUrl(apiProgressStorage, setProgressStorage)
+    }, [apiProgressStorage]);
+    useEffect(() => {
+        fetchTinybirdUrl(apiTrendProcessed, setTrendProcessed)
+    }, [apiTrendProcessed]);
+    useEffect(() => {
+        fetchTinybirdUrl(apiTrendStorage, setTrendStorage)
+    }, [apiTrendStorage]);
+    useEffect(() => {
+        fetchTinybirdUrl(apiBurndown, setBurndown)
+    }, [apiBurndown]);
+    useEffect(() => {
+        fetchTinybirdUrl(apiTableProcessedStorage, setTableProcessedStorage)
+    }, [apiTableProcessedStorage]);
+    useEffect(() => {
+        fetchTinybirdUrl(apiWorkspaceFilter, setWorkspaces)
+    }, [apiWorkspaceFilter]);
+
+    const numberDataFormatter = (number) => {
+        return Intl.NumberFormat("us").format(number).toString();
+    };
+
+    return (
+        <main className="bg-slate-50 p-6 sm:p-10">
+
+            <Title>{contract?.[0].account_name} Organization Dashboard</Title>
+            <Flex marginTop="mt-4" spaceX="space-x-6">
+                <TextInput
+                    value={token}
+                    onChange={(event) => setToken(event.target.value)}
+                    placeholder="Enter auth token"
+                    icon={KeyIcon}
+                    error={token.length === 0}
+                />
+
+                <Select
+                    onValueChange={(value) => setHost(value)}
+                    defaultValue={"api.us-east.tinybird.co"}
+                >
+                    <SelectItem
+                        value={"api.us-east.tinybird.co"}
+                        text={"US-East"} icon={GlobeAmericasIcon}
+                    >
+                        US-East
+                    </SelectItem>
+
+                    <SelectItem
+                        value={"api.tinybird.co"}
+                        text={"EU"}
+                        icon={GlobeAmericasIcon}
+                    >
+                        EU
+                    </SelectItem>
+                </Select>
+
+                <Select
+                    onValueChange={(value) => setWsFilter(value)}
+                    defaultValue={"All"}
+                >
+                    {(workspaces ?? []).map(ws =>
+                        <SelectItem
+                            key={ws?.id}
+                            value={ws?.id}
+                            text={ws?.name}
+                        />
+                    )}
+                </Select>
+            </Flex>
+
+            <Grid numCols={3} gapX="gap-x-6" gapY="gap-y-6" marginTop="mt-4">
+                <Card>
+                    <Text><Bold>Enterprise Plan</Bold></Text>
+                    <Text marginTop="mt-1">{contract?.[0].start_dt} - {contract?.[0].end_dt}</Text>
+                    <Flex marginTop="mt-4" justifyContent='justify-start'>
+                        <Icon icon={CheckCircleIcon} color="emerald" />
+                        <Text ><Bold>{Intl.NumberFormat('us').format(contract?.[0].processed ?? 0)} TB</Bold> processing</Text>
+                    </Flex>
+                    <Flex justifyContent='justify-start'>
+                        <Icon icon={CheckCircleIcon} color="emerald" />
+                        <Text ><Bold>{Intl.NumberFormat('us').format(contract?.[0].storage ?? 0)} TB</Bold> storage</Text>
+                    </Flex>
+                </Card>
+            </Grid>
+
+            <Grid numCols={2} gapX="gap-x-6" gapY="gap-y-6" marginTop="mt-4">
+                <Card>
+                    <Flex alignItems='items-start'>
+                        <Title>Monthly Data Processed</Title>
+                        <Select defaultValue={1} onValueChange={(value) => setSelectedChart(value)} color="emerald">
+                            <SelectItem value={1} text="Bar Chart" icon={ChartBarIcon} />
+                            <SelectItem value={2} text="Burn Down" icon={ArrowTrendingDownIcon} />
+                        </Select>
+                    </Flex>
+                    {selectedChart === 1 ? (
+                        <BarChart
+                            data={trendProcessed}
+                            dataKey="month"
+                            /*categories={["processed_tb","commit_tb"]}*/
+                            categories={["processed_tb"]}
+                            valueFormatter={numberDataFormatter}
+                            colors={["emerald", "sky"]}
+                            marginTop="mt-4"
+                        />
+                    ) : (
+                        <LineChart
+                            data={burndown}
+                            dataKey="month"
+                            categories={["remaining_tb", "commit_tb"]}
+                            colors={["emerald", "sky"]}
+                            valueFormatter={numberDataFormatter}
+                            marginTop="mt-4"
+                        />
+                    )}
+                </Card>
+                <Card>
+                    <Title>Monthly Storage</Title>
+                    <BarChart
+                        data={trendStorage}
+                        dataKey="month"
+                        /*categories={["storage_tb","commit_tb"]}*/
+                        categories={["storage_tb"]}
+                        valueFormatter={numberDataFormatter}
+                        colors={["emerald", "sky"]}
+                        marginTop="mt-7"
+                    />
+                </Card>
+            </Grid>
+
+            <Card hFull={true} marginTop="mt-4">
+                <Flex alignItems='items-start'>
+                    <Title>Consumption by Workspace</Title>
+                    <Flex justifyContent='justify-end' spaceX='space-x-4'>
+                        <Text>Sort by</Text>
+                        <Select marginTop='mt-2' defaultValue={"processed"} onValueChange={(value) => setSort(value)} color="emerald">
+                            <SelectItem value={"processed"} text="Data Processed" />
+                            <SelectItem value={"storage"} text="Storage" />
+                        </Select>
+                    </Flex>
+                </Flex>
+                <Table marginTop="mt-0">
+                    <TableHead>
+                        <TableRow>
+                            <TableHeaderCell textAlignment="text-left">Workspace</TableHeaderCell>
+                            <TableHeaderCell textAlignment="text-right">Data Processed</TableHeaderCell>
+                            <TableHeaderCell textAlignment="text-right">Storage</TableHeaderCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {tableProcessedStorage?.map((item) => (
+                            <TableRow key={item.name}>
+                                <TableCell textAlignment="text-left">{item.name}</TableCell>
+                                <TableCell textAlignment="text-right">{Intl.NumberFormat('us').format(item.processed_tb)}</TableCell>
+                                <TableCell textAlignment="text-right">{Intl.NumberFormat('us').format(item.storage_tb)}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </Card>
+        </main >
+    );
 }
