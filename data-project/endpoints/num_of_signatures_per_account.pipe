@@ -4,6 +4,8 @@ DESCRIPTION >
 
 TOKEN "num_of_signatures_per_account_endpoint_read_2149" READ
 
+TOKEN "read_all_pipes_token" READ
+
 NODE num_of_signatures_per_account_0
 SQL >
 

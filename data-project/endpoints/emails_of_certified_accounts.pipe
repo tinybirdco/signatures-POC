@@ -4,6 +4,8 @@ DESCRIPTION >
 
 TOKEN "emails_of_certified_accounts_endpoint_read_2079" READ
 
+TOKEN "read_all_pipes_token" READ
+
 NODE emails_of_certified_accounts_0
 SQL >
 

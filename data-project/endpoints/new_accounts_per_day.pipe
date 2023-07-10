@@ -1,0 +1,14 @@
+NODE new_accounts_per_day_0
+SQL >
+
+    SELECT 
+      toDate(created_on) as Day, 
+      count(account_id) as New_Accounts 
+    FROM 
+      accounts 
+    GROUP BY 
+      Day 
+    ORDER BY 
+      Day ASC
+
+

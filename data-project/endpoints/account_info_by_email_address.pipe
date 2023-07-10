@@ -4,6 +4,8 @@ DESCRIPTION >
 
 TOKEN "account_info_by_email_address_endpoint_read_2371" READ
 
+TOKEN "read_all_pipes_token" READ
+
 NODE account_info_by_email_address_0
 SQL >
 

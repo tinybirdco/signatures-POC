@@ -1,3 +1,7 @@
+TOKEN "emails_by_status_signatures_nodes_endpoint_read_0951" READ
+
+TOKEN "read_all_pipes_token" READ
+
 NODE emails_by_status_signatures_nodes_select
 SQL >
 

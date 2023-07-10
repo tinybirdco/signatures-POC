@@ -1,0 +1,14 @@
+NODE new_signatures_per_day_0
+SQL >
+
+    SELECT 
+      toDate(created_on) as Day, 
+      count(id) as New_Signatures 
+    FROM 
+      signatures 
+    GROUP BY 
+      Day 
+    ORDER BY 
+      Day ASC
+
+

@@ -238,75 +238,62 @@ export default function Dashboard() {
                             </List>
                         </Card>
                     </Col>
-                    {/* 
-                    <Card>
-                        <Title>New accounts per day</Title>
-                        <LineChart
-                            className="mt-6"
-                            data={chartdata}
-                            index="year"
-                            categories={["Export Growth Rate", "Import Growth Rate"]}
-                            colors={["emerald", "gray"]}
-                            valueFormatter={dataFormatter}
-                            yAxisWidth={40}
-                        /> */}
-                </Card>
 
-            </Grid>
+                </Grid>
 
-            <Divider />
+                <Divider />
 
-            <Grid
-                numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
-            >
-                <Col numColSpan={1} numColSpanLg={2}>
-                    <Card>
-                        <Title>User Dashboard</Title>
-                    </Card>
-                </Col >
-                <Col numColSpan={1} numColSpanLg={2}>
-                    <Card >
-                        <Text>Account</Text>
-                        <Select
-                            value={account_id}
-                            text={account_id}
-                            onValueChange={(value) => setAccountID(value)}
-                        >
-                            {ranking_of_top_accounts_creating_signatures.map((account) => (
-                                <SelectItem key={account.account_id}
-                                    value={account.account_id}
-                                    text={account.account_id}
-                                >
-                                    {account.account_id}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                    </Card>
-                </Col>
+                <Grid
+                    numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
+                >
+                    <Col numColSpan={1} numColSpanLg={2}>
+                        <Card>
+                            <Title>User Dashboard</Title>
+                        </Card>
+                    </Col >
+                    <Col numColSpan={1} numColSpanLg={2}>
+                        <Card >
+                            <Text>Account</Text>
+                            <Select
+                                value={account_id}
+                                text={account_id}
+                                onValueChange={(value) => setAccountID(value)}
+                            >
+                                {ranking_of_top_accounts_creating_signatures.map((account) => (
+                                    <SelectItem key={account.account_id}
+                                        value={account.account_id}
+                                        text={account.account_id}
+                                    >
+                                        {account.account_id}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                        </Card>
+                    </Col>
 
 
-                <Col numColSpan={1} numColSpanLg={1}>
-                    <Card className="mt-6">
-                        <Title>Status of your signatures</Title>
+                    <Col numColSpan={1} numColSpanLg={1}>
+                        <Card className="mt-6">
+                            <Title>Status of your signatures</Title>
 
-                        <List>
-                            {userCompletnessOfSignatures.map((item) => (
+                            <List>
+                                {userCompletnessOfSignatures.map((item) => (
 
-                                <Card className="max-w-sm mx-auto" key={item.signature_id}>
-                                    <Flex>
-                                        <Text>{item.percentage_complete}%</Text>
-                                        <Text>{item.status}</Text>
-                                    </Flex>
-                                    <ProgressBar value={item.percentage} color={item.color} className="mt-3" />
-                                </Card>
-                            ))}
-                        </List>
-                    </Card>
-                </Col>
+                                    <Card className="max-w-sm mx-auto" key={item.signature_id}>
+                                        <Flex>
+                                            <Text>{item.percentage_complete}%</Text>
+                                            <Text>{item.status}</Text>
+                                        </Flex>
+                                        <ProgressBar value={item.percentage} color={item.color} className="mt-3" />
+                                    </Card>
+                                ))}
+                            </List>
+                        </Card>
+                    </Col>
 
-            </Grid>
+                </Grid>
 
-        </main >
+            </main >
         </>
     );
 }

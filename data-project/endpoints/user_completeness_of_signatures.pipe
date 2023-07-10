@@ -1,0 +1,50 @@
+DESCRIPTION >
+	Percentage complete for each signature of a user
+
+
+TOKEN "read_all_pipes_token" READ
+
+TOKEN "user_completeness_of_signatures_endpoint_read_9361" READ
+
+NODE user_completeness_of_signatures_0
+SQL >
+
+    %
+    SELECT 
+      account_id,
+      id as signature_id, 
+      status,
+      CASE
+        WHEN status = 'in_queue' THEN 5
+        WHEN status = 'ready' THEN 7
+        WHEN status = 'signing' THEN 50
+        WHEN status IN ('completed', 'expired', 'canceled', 'declined') THEN 100
+        WHEN status = 'error' THEN 0
+        ELSE 0
+      END as percentage_complete,
+      CASE
+        WHEN status = 'in_queue' THEN 'orange'
+        WHEN status = 'ready' THEN 'teal'
+        WHEN status = 'signing' THEN 'yellow'
+        WHEN status IN ('completed', 'expired', 'canceled', 'declined') THEN 'blue'
+        WHEN status = 'error' THEN 'red'
+        ELSE 'grey'
+      END as color
+    FROM 
+      signatures 
+    WHERE
+        account_id
+        = {{
+            String(
+                account_id,
+                description="The account_id of the user",
+                required=False,
+                default='65827',
+            )
+        }}
+    ORDER BY 
+      percentage_complete ASC
+    LIMIT
+      10
+
+

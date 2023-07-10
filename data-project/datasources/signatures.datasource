@@ -6,8 +6,9 @@ SCHEMA >
     `signatureType` String `json:$.signatureType`,
     `since` DateTime64(3) `json:$.since`,
     `status` String `json:$.status`,
+    `timestamp` Int64 `json:$.timestamp`,
     `until` DateTime64(3) `json:$.until`
 
 ENGINE "MergeTree"
 ENGINE_PARTITION_KEY "toYear(created_on)"
-ENGINE_SORTING_KEY "created_on, id, signatureType, status"
+ENGINE_SORTING_KEY "created_on, signatureType, status, timestamp"

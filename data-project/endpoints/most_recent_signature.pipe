@@ -4,10 +4,12 @@ DESCRIPTION >
 
 TOKEN "most_recent_signature_endpoint_read_9347" READ
 
+TOKEN "read_all_pipes_token" READ
+
 NODE most_recent_signature_0
 SQL >
 
-    SELECT a.*
+    SELECT a.*, s.until
     FROM accounts AS a
     JOIN signatures AS s ON a.account_id = s.account_id
     WHERE s.until = (SELECT MAX(until) FROM signatures)

@@ -4,6 +4,8 @@ DESCRIPTION >
 
 TOKEN "emails_of_expired_signatures_endpoint_read_4335" READ
 
+TOKEN "read_all_pipes_token" READ
+
 NODE emails_by_status_signatures_0
 DESCRIPTION >
     Count of the number of signatures per status, regardless of whether they are associated with an account.

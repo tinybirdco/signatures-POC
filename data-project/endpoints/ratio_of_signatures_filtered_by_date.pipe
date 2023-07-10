@@ -1,8 +1,10 @@
 DESCRIPTION >
-	Ratio or % of signatures by state filtering by date:
+	Ratio or % of signatures by state filtering by creation date:
 
 
 TOKEN "ratio_of_signatures_filtered_by_date_endpoint_read_3474" READ
+
+TOKEN "read_all_pipes_token" READ
 
 NODE ratio_of_signatures_filtered_by_date_0
 SQL >
@@ -13,17 +15,17 @@ SQL >
       count(id) as total_signatures, 
       (count(id) * 100 / (SELECT count(*) FROM signatures WHERE created_on BETWEEN {{
             String(
-                start_date,
+                date_from,
                 description="The start date",
                 required=False,
-                default='2023-06-26',
+                default='2023-07-01',
             )
         }} AND {{
             String(
-                end_date,
+                date_to,
                 description="The end date",
                 required=False,
-                default='2023-07-26',
+                default='2023-08-10',
             )
         }} )) as percentage 
     FROM 
@@ -31,17 +33,17 @@ SQL >
     WHERE 
       created_on BETWEEN {{
             String(
-                start_date,
+                date_from,
                 description="The start date",
                 required=False,
-                default='2023-06-26',
+                default='2023-07-01',
             )
         }} AND {{
             String(
-                end_date,
+                date_to,
                 description="The end date",
                 required=False,
-                default='2023-07-26',
+                default='2023-08-10',
             )
         }}
     GROUP BY

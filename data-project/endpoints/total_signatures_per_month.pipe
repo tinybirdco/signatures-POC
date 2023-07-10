@@ -2,6 +2,10 @@ DESCRIPTION >
 	Total number of signatures along time
 
 
+TOKEN "total_signatures_per_month_endpoint_read_4228" READ
+
+TOKEN "read_all_pipes_token" READ
+
 NODE total_signatures_per_month_0
 DESCRIPTION >
     Total number of signatures along time

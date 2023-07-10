@@ -2,7 +2,11 @@ DESCRIPTION >
 	List of signatures about to expire. This endpoint can be used to trigger alerts.
 
 
-NODE untitled_pipe_7804_0
+TOKEN "signatures_that_will_soon_expire_endpoint_read_5764" READ
+
+TOKEN "read_all_pipes_token" READ
+
+NODE signatures_that_will_soon_expire_0
 SQL >
 
     SELECT 
@@ -15,5 +19,7 @@ SQL >
       until >= now() AND dateDiff('day', now(), until) <= 7 
     ORDER BY 
       until ASC
+    LIMIT
+      8
 
 

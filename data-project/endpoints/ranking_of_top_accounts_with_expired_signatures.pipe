@@ -2,12 +2,16 @@ DESCRIPTION >
 	Ranking of the top accounts having signatures expired:
 
 
+TOKEN "ranking_of_top_accounts_with_expired_signatures_endpoint_read_4189" READ
+
+TOKEN "read_all_pipes_token" READ
+
 NODE ranking_of_top_accounts_with_expired_signatures_0
 SQL >
 
     SELECT 
-      account_id, 
-      count(id) as expired_signatures 
+      account_id as name,
+      count(id) as value 
     FROM 
       signatures 
     WHERE 
@@ -15,6 +19,8 @@ SQL >
     GROUP BY 
       account_id 
     ORDER BY 
-      expired_signatures DESC
+      value DESC
+    LIMIT
+      7
 
 
