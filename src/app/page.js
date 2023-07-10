@@ -2,31 +2,45 @@
 
 import {
     BarChart,
+    BarList,
+    Bold,
     Card,
     Col,
+    Divider,
+    Flex,
     Title,
     Grid,
-    Text,
     DonutChart,
     DateRangePicker,
-    Divider,
     Legend,
-    Flex,
-    TextInput,
+    ProgressBar,
+    Subtitle,
     Select,
     SelectItem,
-    Subtitle,
     List,
-    ListItem
+    ListItem,
+    Text
 } from '@tremor/react';
 import Head from "next/head";
-import { KeyIcon, GlobeAmericasIcon } from '@heroicons/react/24/solid';
 import { useState, useEffect } from 'react';
+import TinybirdAPIConfigInput from './components/TinybirdAPIConfigInput';
+import {
+    fetchTinybirdUrl,
+    getApiRatioOfFiltersUrl,
+    getApiSignaturesExpiringSoonUrl,
+    getApiRankingOfTopAccountsWithExpiredSignaturesUrl,
+    getApiRankingOfTopAccountsCreatingSignaturesUrl,
+    getApiTotalSignaturesPerMonthUrl,
+    getApiUserCompletenessOfSignaturesUrl,
+    handleInputTokenChange,
+    percentageFormatter,
+    numberDataFormatter,
+} from './utils';
 
 const TINYBIRD_HOST = process.env.NEXT_PUBLIC_TINYBIRD_HOST;
 const TINYBIRD_TOKEN = process.env.NEXT_PUBLIC_TINYBIRD_TOKEN;
 
-export default function Dashborad() {
+export default function Dashboard() {
 
     const [dates, setDates] = useState({
         from: new Date(2023, 5, 1),
@@ -38,7 +52,9 @@ export default function Dashborad() {
     let date_to = dates.to ? new Date(dates.to.getTime() - dates.to.getTimezoneOffset() * 60000 + 60000 * 60 * 24 - 1).toISOString().substring(0, 10) : date_from;
 
     const [token, setToken] = useState(TINYBIRD_TOKEN || '');
-    const [host, setHost] = useState('api.tinybird.co');
+    const [host, setHost] = useState(TINYBIRD_HOST || 'api.tinybird.co');
+    const [account_id, setAccountID] = useState('65827');
+
     const [ratio_of_filters, set_ratio_of_filters] = useState([{
         "percentage": 0,
         "status": '',
@@ -49,8 +65,8 @@ export default function Dashborad() {
         "until": '',
     }]);
     const [top_accounts_with_expired_signatures, setTopExpiringAccounts] = useState([{
-        "account_id": '',
-        "expired_signatures": 0,
+        "name": '',
+        "value": 0,
     }]);
     const [ranking_of_top_accounts_creating_signatures, setTopAccounts] = useState([{
         "account_id": '',
@@ -63,44 +79,20 @@ export default function Dashborad() {
         "advance(digital certificate)": 0,
         "qualified": 0
     }]);
+    const [userCompletnessOfSignatures, setUserCompletenessOfSignatures] = useState([{
+        "account_id": 0,
+        "signature_id": "",
+        "status": "",
+        "percentage_complete": 0,
+        "color": 'grey',
+    }]);
 
-    let api_ratio_of_filters = `https://${host}/v0/pipes/ratio_of_signatures_filtered_by_date.json?token=${token}${date_from ? `&date_from=${date_from}` : ''}${date_to ? `&date_to=${date_to}` : ''}`;
-    let api_signatures_expiring_soon = `https://${host}/v0/pipes/signatures_that_will_soon_expire.json?token=${token}`;
-    let api_ranking_of_top_accounts_with_expired_signatures = `https://${host}/v0/pipes/ranking_of_top_accounts_with_expired_signatures.json?token=${token}`;
-    let api_ranking_of_top_accounts_creating_signatures = `https://${host}/v0/pipes/ranking_of_top_accounts_creating_signatures.json?token=${token}`;
-    let api_total_signatures_per_month = `https://${host}/v0/pipes/total_signatures_per_month.json?token=${token}`;
-
-    const transformData = (data) => {
-        // Create a hashmap for easy access and manipulation of the data
-        let map = data.reduce((acc, curr) => {
-            if (!acc[curr.month]) {
-                acc[curr.month] = {
-                    month: curr.month,
-                };
-            }
-
-            // no need for the check as there's no duplicate signature type in the same month
-            acc[curr.month][curr.signatureType] = curr.total_signatures;
-
-            return acc;
-        }, {});
-
-        // Convert the hashmap back to an array
-        console.log(Object.values(map))
-        return Object.values(map);
-    }
-
-    const fetchTinybirdUrl = async (fetchUrl, setState) => {
-        console.log(fetchUrl);
-        const data = await fetch(fetchUrl)
-        const jsonData = await data.json();
-        console.log(jsonData.data)
-        if (fetchUrl === api_total_signatures_per_month) {
-            setState(transformData(jsonData.data));
-        } else {
-            setState(jsonData.data);
-        }
-    }
+    const api_ratio_of_filters = getApiRatioOfFiltersUrl(host, token, date_from, date_to);
+    let api_signatures_expiring_soon = getApiSignaturesExpiringSoonUrl(host, token)
+    let api_ranking_of_top_accounts_with_expired_signatures = getApiRankingOfTopAccountsWithExpiredSignaturesUrl(host, token)
+    let api_ranking_of_top_accounts_creating_signatures = getApiRankingOfTopAccountsCreatingSignaturesUrl(host, token)
+    let api_total_signatures_per_month = getApiTotalSignaturesPerMonthUrl(host, token);
+    let api_user_completeness_of_signatures = getApiUserCompletenessOfSignaturesUrl(host, token, account_id);
 
     useEffect(() => {
         fetchTinybirdUrl(api_ratio_of_filters, set_ratio_of_filters)
@@ -117,27 +109,10 @@ export default function Dashborad() {
     useEffect(() => {
         fetchTinybirdUrl(api_total_signatures_per_month, setTotalSignaturesPerMonth)
     }, []);
+    useEffect(() => {
+        fetchTinybirdUrl(api_user_completeness_of_signatures, setUserCompletenessOfSignatures)
+    }, [api_user_completeness_of_signatures]);
 
-    const validateInputToken = async (inputValue) => {
-        const response = await fetch(`https://${TINYBIRD_HOST}/v0/pipes?token=${inputValue}`);
-        // console.log(response.status)
-        return response.status === 200;
-    };
-
-    const handleInputTokenChange = async (event) => {
-        const newToken = event.target.value;
-        const isValid = await validateInputToken(newToken);
-        if (isValid) {
-            setToken(newToken);
-            // console.log(newToken);
-        }
-    };
-
-    const percentageFormatter = (number) => `${Intl.NumberFormat("us").format(number).toString()}%`;
-
-    const numberDataFormatter = (number) => {
-        return Intl.NumberFormat("us").format(number).toString();
-    };
 
     return (
         <>
@@ -145,53 +120,23 @@ export default function Dashborad() {
                 <title>Signaturit POC</title>
             </Head>
             <main className="bg-slate-50 p-6 sm:p-10">
-                <Title>Signaturit Dashboard</Title>
-                <Grid
-                    numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
-                >
-                    <Col numColSpan={1} numColSpanLg={2}>
-                        <Card>
-                            <Text>Token</Text>
-                            <TextInput
-                                value={token}
-                                text="Your API token from Tinybird"
-                                onChange={handleInputTokenChange}
-                            // error={async (value) => !await validateInputToken(value)}
-                            />
-                        </Card>
-                    </Col>
-                    <Col numColSpan={1} numColSpanLg={2}>
-                        <Card >
-                            <Text>Host</Text>
-                            <Select
-                                value={host}
-                                onValueChange={(value) => setHost(value)}
-                            >
-                                <SelectItem
-                                    value="api.us-east.tinybird.co"
-                                    text="US-East"
-                                    icon={GlobeAmericasIcon}
-                                >
-                                    US-East
-                                </SelectItem>
-
-                                <SelectItem
-                                    value="api.tinybird.co"
-                                    text="EU"
-                                    icon={GlobeAmericasIcon}
-                                >
-                                    EU
-                                </SelectItem>
-                            </Select>
-                        </Card>
-                    </Col>
-                </Grid >
-
+                <TinybirdAPIConfigInput
+                    token={token}
+                    host={host}
+                    setHost={setHost}
+                    handleInputTokenChange={handleInputTokenChange}
+                    setToken={setToken}
+                />
                 <Divider />
 
                 <Grid
                     numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
                 >
+                    <Col numColSpan={1} numColSpanLg={4}>
+                        <Card>
+                            <Title>Internal Signaturit Admin Dashboard</Title>
+                        </Card>
+                    </Col >
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card>
                             <Title>Total number of signatures per month</Title>
@@ -209,7 +154,7 @@ export default function Dashborad() {
                         </Card>
                     </Col >
 
-                    <Col numColSpan={1} numColSpanLg={4}>
+                    <Col numColSpan={1} numColSpanLg={3}>
                         <Card>
                             <Title>Top accounts creating signatures</Title>
                             <Subtitle>
@@ -230,6 +175,28 @@ export default function Dashborad() {
                     </Col >
 
                     <Col numColSpan={1} numColSpanLg={1}>
+                        <Card>
+                            <Title>Ranking of the top accounts having signatures expired</Title>
+                            <Subtitle>
+                                Ranked from highest to lowest
+                            </Subtitle>
+                            <Flex className="mt-4">
+                                <Text>
+                                    <Bold>Account ID</Bold>
+                                </Text>
+                                <Text>
+                                    <Bold>Expired Signatures</Bold>
+                                </Text>
+                            </Flex>
+                            <BarList
+                                className="mt-6"
+                                data={top_accounts_with_expired_signatures}
+                                valueFormatter={numberDataFormatter}
+                            />
+                        </Card>
+                    </Col>
+
+                    <Col numColSpan={1} numColSpanLg={2}>
                         <Card>
                             <Title>Ratio of signatures by Date</Title>
                             <DonutChart
@@ -260,6 +227,7 @@ export default function Dashborad() {
                     <Col numColSpan={1} numColSpanLg={1}>
                         <Card className="mt-6">
                             <Title>Signatures Expiring Soon</Title>
+
                             <List>
                                 {expiring_signatures.map((item) => (
                                     <ListItem key={item.account_id}>
@@ -270,49 +238,76 @@ export default function Dashborad() {
                             </List>
                         </Card>
                     </Col>
+                    {/* 
+                    <Card>
+                        <Title>New accounts per day</Title>
+                        <LineChart
+                            className="mt-6"
+                            data={chartdata}
+                            index="year"
+                            categories={["Export Growth Rate", "Import Growth Rate"]}
+                            colors={["emerald", "gray"]}
+                            valueFormatter={dataFormatter}
+                            yAxisWidth={40}
+                        /> */}
+                </Card>
 
-                    <Col numColSpan={1} numColSpanLg={1}>
-                        <Card className="mt-6">
-                            <Title>Ranking of the top accounts having signatures expired</Title>
-                            <List>
-                                {top_accounts_with_expired_signatures.map((account) => (
-                                    <ListItem key={account.account_id}>
-                                        <span>{account.account_id}</span>
-                                        <span>{account.expired_signatures}</span>
-                                    </ListItem>
-                                ))}
-                            </List>
-                            <Legend
-                                className="mt-3"
-                                categories={["Account ID", "Expired Signatures"]}
-                                colors={["emerald", "red"]}
-                            />
-                        </Card>
-                    </Col>
+            </Grid>
 
-                    <Col numColSpan={1} numColSpanLg={1}>
-                        <Card>
-                            <Title>Top accounts creating signatures</Title>
-                            <Subtitle>
-                                Ranked from highest to lowest
-                            </Subtitle>
-                            <BarChart
-                                className="mt-6"
-                                data={ranking_of_top_accounts_creating_signatures}
-                                index="account_id"
-                                categories={["total_signatures"]}
-                                colors={["blue", "red"]}
-                                valueFormatter={numberDataFormatter}
-                                yAxisWidth={48}
-                                showXAxis={true}
-                                autoMinValue={true}
-                            />
-                        </Card>
-                    </Col>
+            <Divider />
 
-                </Grid>
+            <Grid
+                numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
+            >
+                <Col numColSpan={1} numColSpanLg={2}>
+                    <Card>
+                        <Title>User Dashboard</Title>
+                    </Card>
+                </Col >
+                <Col numColSpan={1} numColSpanLg={2}>
+                    <Card >
+                        <Text>Account</Text>
+                        <Select
+                            value={account_id}
+                            text={account_id}
+                            onValueChange={(value) => setAccountID(value)}
+                        >
+                            {ranking_of_top_accounts_creating_signatures.map((account) => (
+                                <SelectItem key={account.account_id}
+                                    value={account.account_id}
+                                    text={account.account_id}
+                                >
+                                    {account.account_id}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </Card>
+                </Col>
 
-            </main >
+
+                <Col numColSpan={1} numColSpanLg={1}>
+                    <Card className="mt-6">
+                        <Title>Status of your signatures</Title>
+
+                        <List>
+                            {userCompletnessOfSignatures.map((item) => (
+
+                                <Card className="max-w-sm mx-auto" key={item.signature_id}>
+                                    <Flex>
+                                        <Text>{item.percentage_complete}%</Text>
+                                        <Text>{item.status}</Text>
+                                    </Flex>
+                                    <ProgressBar value={item.percentage} color={item.color} className="mt-3" />
+                                </Card>
+                            ))}
+                        </List>
+                    </Card>
+                </Col>
+
+            </Grid>
+
+        </main >
         </>
     );
 }
+

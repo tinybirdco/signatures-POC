@@ -19,6 +19,7 @@ const generateSubscriptionPayload = (account_id, status, signatureType) => {
         data: {},
         account_id,
         created_on: faker.date.recent({ days: 120 }),
+        timestamp: Date.now(),
     }
 }
 
@@ -37,6 +38,8 @@ const generateAccountPayload = () => {
         person: faker.person.fullName(),
         certified_email: faker.datatype.boolean(),
         photo_id_certified: faker.datatype.boolean(),
+        created_on: faker.date.recent({ days: 120 }),
+        timestamp: Date.now(),
     }
 }
 
