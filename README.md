@@ -27,38 +27,44 @@ cd signaturit-poc
 
 3. Install dependencies
 
+This script will automatically install and configure the `tinybird-cli` for this project.
+
 ```bash
 npm install
 ```
 
-4. Install and configure the Tinybird CLI
+Choose your region: 1 for `us-east`, 2 for `eu`. A new `.tinyb` file will be created.tb
 
-To start working with data projects as if they were software projects, First, install the Tinybird CLI in a virtual environment.
-You'll need python3 installed.
-
-Check the [Tinybird CLI documentation](https://docs.tinybird.co/cli.html) for other installation options and troubleshooting tips.
-
-```bash
-python3 -mvenv .e
-. .e/bin/activate
-pip install tinybird-cli
-tb auth --interactive
-```
-
-Choose your region: 1 for `us-east`, 2 for `eu`. A new `.tinyb` file will be created.
-
-Go to [https://ui.tinybird.co/tokens](https://ui.tinybird.co/tokens) and copy the token with admin rights into the `.env` file.
+Go to [https://ui.tinybird.co/tokens](https://ui.tinybird.co/tokens) and copy the token with admin rights.
 
 ⚠️Warning! The Admin token, the one you copied following this guide, is your admin token. Don't share it or publish it in your application. You can manage your tokens via API or using the Auth Tokens section in the UI. More detailed info at [Auth Tokens management](https://www.tinybird.co/docs/api-reference/token-api.html)
 
-1. Start generating data!
+4. Start generating data!
 
 In the terminal, run the following command:
 
 ```bash
-npm start
+npm run seed
 ```
+
+Go to your [Tinybird workspace](https://ui.tinybird.co) and check the data is flowing.
+
+5. Run the Tremor Dashboard
+
+```bash
+npm run dev
+```
+
+6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ### License
 
 This project is licensed under the MIT License.
+
+### Need help?
+
+[Community Slack](https://www.tinybird.co/join-our-slack-community) &bull; [Tinybird Docs](https://docs.tinybird.co/) &bull;
+
+## Authors
+
+- [Joe Karlsson](https://github.com/joekarlsson)

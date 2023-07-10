@@ -14,11 +14,11 @@ const generateSubscriptionPayload = (account_id, status, signatureType) => {
         status,
         signatureType,
         id: faker.string.uuid(),
-        since: faker.date.recent({ days: 10 }),
-        until: faker.date.soon({ days: 10 }),
+        since: faker.date.recent({ days: 90 }),
+        until: faker.date.soon({ days: 90 }),
         data: {},
         account_id,
-        created_on: faker.date.recent({ days: 11 }),
+        created_on: faker.date.recent({ days: 120 }),
     }
 }
 

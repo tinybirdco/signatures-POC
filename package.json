@@ -5,8 +5,12 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start": "node data_seeder/index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "seed": "node data-project/index.js",
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "preinstall": "./configure.sh"
     },
     "keywords": [],
     "author": "",
@@ -15,6 +19,16 @@
         "@faker-js/faker": "^8.0.2"
     },
     "devDependencies": {
-        "eslint": "^8.43.0"
+        "eslint": "^8.43.0",
+        "@heroicons/react": "^2.0.13",
+        "@tremor/react": "^3.4.1",
+        "autoprefixer": "10.4.14",
+        "eslint": "8.44.0",
+        "eslint-config-next": "13.4.9",
+        "next": "13.4.9",
+        "postcss": "8.4.25",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "tailwindcss": "3.3.2"
     }
 }
