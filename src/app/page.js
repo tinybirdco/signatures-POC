@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    Badge,
     BarChart,
     BarList,
     Bold,
@@ -26,6 +27,8 @@ import Head from "next/head";
 import { useState, useEffect } from 'react';
 import TinybirdAPIConfigInput from './components/TinybirdAPIConfigInput';
 import {
+    getDateOrDefault,
+    getNextDay,
     fetchTinybirdUrl,
     getApiRatioOfFiltersUrl,
     getApiSignaturesExpiringSoonUrl,
@@ -34,6 +37,8 @@ import {
     getApiTotalSignaturesPerMonthUrl,
     getApiUserCompletenessOfSignaturesUrl,
     getApiNewSignaturesPerDay,
+    getApiUserStatusOfSignaturesPerDay,
+    getApiTenRandomUsers,
     handleInputTokenChange,
     percentageFormatter,
     numberDataFormatter,
@@ -48,22 +53,32 @@ export default function Dashboard() {
         from: new Date(2023, 5, 1),
         to: new Date()
     });
-
     const [dates_new_signatures_graph, setDatesNewSignatureGraph] = useState({
         from: new Date(2023, 5, 1),
         to: new Date()
     });
 
-    let date_from_ratio_graph = dates_ratio_graph.from ? new Date(dates_ratio_graph.from.getTime() - dates_ratio_graph.from.getTimezoneOffset() * 60000).toISOString().substring(0, 10) : new Date(2023, 5, 1).toISOString().substring(0, 10);
-    let date_to_ratio_graph = dates_ratio_graph.to ? new Date(dates_ratio_graph.to.getTime() - dates_ratio_graph.to.getTimezoneOffset() * 60000 + 60000 * 60 * 24 - 1).toISOString().substring(0, 10) : date_from_ratio_graph;
-    let dates_from_new_signatures_graph = dates_new_signatures_graph.from.toISOString().substring(0, 10) ? new Date(dates_new_signatures_graph.from.getTime() - dates_new_signatures_graph.from.getTimezoneOffset() * 60000).toISOString().substring(0, 10) : new Date(2023, 5, 1).toISOString().substring(0, 10);
-    let dates_to_new_signatures_graph = dates_new_signatures_graph.to.toISOString().substring(0, 10) ? new Date(dates_new_signatures_graph.to.getTime() - dates_new_signatures_graph.to.getTimezoneOffset() * 60000 + 60000 * 60 * 24 - 1).toISOString().substring(0, 10) : dates_from_new_signatures_graph;
-
+    let defaultDate = new Date(2023, 5, 1);
+    let date_from_ratio_graph = getDateOrDefault(dates_ratio_graph.from, defaultDate);
+    let date_to_ratio_graph = getNextDay(dates_ratio_graph.to) || date_from_ratio_graph;
+    let dates_from_new_signatures_graph = getDateOrDefault(dates_new_signatures_graph.from, defaultDate);
+    let dates_to_new_signatures_graph = getNextDay(dates_new_signatures_graph.to) || dates_from_new_signatures_graph;
 
     const [token, setToken] = useState(TINYBIRD_TOKEN || '');
     const [host, setHost] = useState(TINYBIRD_HOST || 'api.tinybird.co');
-    const [account_id, setAccountID] = useState('65827');
-
+    const [account, setAccount] = useState({
+        "account_id": 64098,
+        "certified_SMS": 0,
+        "certified_email": 0,
+        "created_on": "",
+        "email": "",
+        "person": "",
+        "phone": "",
+        "photo_id_certified": 0,
+        "role": "",
+        "status": "",
+        "timestamp": 0
+    });
     const [ratio_of_filters, set_ratio_of_filters] = useState([{
         "percentage": 0,
         "status": '',
@@ -88,6 +103,23 @@ export default function Dashboard() {
         "advance(digital certificate)": 0,
         "qualified": 0
     }]);
+    const [newSignaturesPerDay, setNewSignaturesPerDay] = useState([{
+        "day": "",
+        "new_signatures": 0
+    }]);
+    const [tenRandomUsers, setTenRandomUsers] = useState([{
+        "account_id": 64098,
+        "certified_SMS": 0,
+        "certified_email": 0,
+        "created_on": "",
+        "email": "",
+        "person": "",
+        "phone": "",
+        "photo_id_certified": 0,
+        "role": "",
+        "status": "",
+        "timestamp": 0
+    }]);
     const [userCompletnessOfSignatures, setUserCompletenessOfSignatures] = useState([{
         "account_id": 0,
         "signature_id": "",
@@ -95,18 +127,21 @@ export default function Dashboard() {
         "percentage_complete": 0,
         "color": 'grey',
     }]);
-    const [newSignaturesPerDay, setNewSignaturesPerDay] = useState([{
+    const [userStatusOfSignaturesPerDay, setUserStatusOfSignaturesPerDay] = useState([{
         "day": "",
-        "new_signatures": 0
+        "status": "",
+        "status_Count": 0
     }]);
 
     let api_signatures_expiring_soon = getApiSignaturesExpiringSoonUrl(host, token)
     let api_ranking_of_top_accounts_with_expired_signatures = getApiRankingOfTopAccountsWithExpiredSignaturesUrl(host, token)
     let api_ranking_of_top_accounts_creating_signatures = getApiRankingOfTopAccountsCreatingSignaturesUrl(host, token)
     let api_total_signatures_per_month = getApiTotalSignaturesPerMonthUrl(host, token);
-    let api_user_completeness_of_signatures = getApiUserCompletenessOfSignaturesUrl(host, token, account_id);
     let api_ratio_of_filters = getApiRatioOfFiltersUrl(host, token, date_from_ratio_graph, date_to_ratio_graph);
     let api_new_signatures_per_day = getApiNewSignaturesPerDay(host, token, dates_from_new_signatures_graph, dates_to_new_signatures_graph);
+    let api_ten_random_users = getApiTenRandomUsers(host, token);
+    let api_user_completeness_of_signatures = getApiUserCompletenessOfSignaturesUrl(host, token, account.account_id);
+    let api_user_status_of_signatures_per_day = getApiUserStatusOfSignaturesPerDay(host, token, account.account_id);
 
     useEffect(() => {
         fetchTinybirdUrl(api_ratio_of_filters, set_ratio_of_filters)
@@ -124,11 +159,17 @@ export default function Dashboard() {
         fetchTinybirdUrl(api_total_signatures_per_month, setTotalSignaturesPerMonth)
     }, []);
     useEffect(() => {
+        fetchTinybirdUrl(api_new_signatures_per_day, setNewSignaturesPerDay)
+    }, [api_new_signatures_per_day]);
+    useEffect(() => {
+        fetchTinybirdUrl(api_ten_random_users, setTenRandomUsers)
+    }, []);
+    useEffect(() => {
         fetchTinybirdUrl(api_user_completeness_of_signatures, setUserCompletenessOfSignatures)
     }, [api_user_completeness_of_signatures]);
     useEffect(() => {
-        fetchTinybirdUrl(api_new_signatures_per_day, setNewSignaturesPerDay)
-    }, [api_new_signatures_per_day]);
+        fetchTinybirdUrl(api_user_status_of_signatures_per_day, setUserStatusOfSignaturesPerDay)
+    }, [api_user_status_of_signatures_per_day]);
 
     return (
         <>
@@ -290,17 +331,17 @@ export default function Dashboard() {
                             <Title>User Dashboard</Title>
                         </Card>
                     </Col >
+
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card >
                             <Text>Account</Text>
                             <Select
-                                value={account_id}
-                                text={account_id}
-                                onValueChange={(value) => setAccountID(value)}
+                                value={account}
+                                onValueChange={(value) => setAccount(value)}
                             >
-                                {ranking_of_top_accounts_creating_signatures.map((account) => (
+                                {tenRandomUsers.map((account) => (
                                     <SelectItem key={account.account_id}
-                                        value={account.account_id}
+                                        value={account}
                                         text={account.account_id}
                                     >
                                         {account.account_id}
@@ -310,6 +351,33 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
+                    <Col numColSpan={1} numColSpanLg={4}>
+                        <Card >
+                            <Text>Account Info</Text>
+                            <Flex justifyContent="right" alignItems="center">
+                                <Badge size="md">Name: {account.person}</Badge>
+                                <Badge size="md">Account #: {account.account_id}</Badge>
+                                <Badge size="md">Email: {account.email}</Badge>
+                                <Badge size="md">Phone: {account.phone}</Badge>
+                                <Badge size="md">Role: {account.role}</Badge>
+                                <Badge size="md">Account status: {account.status}</Badge>
+                            </Flex>
+                        </Card>
+                    </Col>
+
+                    <Col numColSpan={1} numColSpanLg={3}>
+                        <Card>
+                            <Title>Status of your signatures per day</Title>
+                            <BarChart
+                                className="mt-6"
+                                data={userStatusOfSignaturesPerDay}
+                                index="day"
+                                categories={["in_queue", "ready", "signing", "completed", "expired", "canceled", "declined", "error"]}
+                                colors={["blue", "red", "amber", "indigo", "rose", "cyan"]}
+                                valueFormatter={numberDataFormatter}
+                            />
+                        </Card>
+                    </Col >
 
                     <Col numColSpan={1} numColSpanLg={1}>
                         <Card className="mt-6">
@@ -317,7 +385,7 @@ export default function Dashboard() {
 
                             <List>
                                 {userCompletnessOfSignatures.map((item) => (
-                                    <Card className="max-w-sm mx-auto" key={item.signature_id}>
+                                    <Card className="mt-6" key={item.signature_id}>
                                         <Flex>
                                             <Text>{item.percentage_complete}%</Text>
                                             <Text>{(item.signature_id).substring(0, 7)}</Text>

@@ -72,7 +72,7 @@ This project is licensed under the MIT License.
 
 ### Need help?
 
-[Community Slack](https://www.tinybird.co/join-our-slack-community) &bull; [Tinybird Docs](https://docs.tinybird.co/) &bull;
+&bull; [Community Slack](https://www.tinybird.co/join-our-slack-community) &bull; [Tinybird Docs](https://docs.tinybird.co/) &bull;
 
 ## Authors
 
