@@ -5,7 +5,7 @@ export async function read_tinyb_config(path) {
     return new Promise((resolve, reject) => {
         fs.readFile(path, "utf8", (err, jsonString) => {
             if (err) {
-                console.log("File read failed:", err);
+                console.log("File read failed. Try reauthenticating with the Tinybird CLI:", err);
                 reject(err);
             }
             const token = JSON.parse(jsonString).token;

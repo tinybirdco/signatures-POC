@@ -44,7 +44,7 @@ Go to [https://ui.tinybird.co/tokens](https://ui.tinybird.co/tokens) and copy th
 Push the data project —datasources, pipes and fixtures— to your workspace
 
 ```bash
-tb push --fixtures
+cd data-project && tb push --fixtures && cd ..
 ```
 
 5. Start generating data!
