@@ -1,0 +1,17 @@
+TOKEN "read_all_pipes_token" READ
+
+TOKEN "untitled_pipe_2573_endpoint_read_8223" READ
+
+NODE ten_random_users_0
+SQL >
+
+    SELECT 
+      *
+    FROM 
+      accounts 
+    ORDER BY 
+      rand()
+    LIMIT 
+      10
+
+

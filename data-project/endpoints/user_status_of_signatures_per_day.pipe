@@ -2,6 +2,10 @@ DESCRIPTION >
 	Status of Signatures Over Time for a Specific User
 
 
+TOKEN "read_all_pipes_token" READ
+
+TOKEN "user_status_of_signatures_per_day_endpoint_read_4885" READ
+
 NODE user_status_of_signatures_per_day_0
 DESCRIPTION >
     Status of Signatures Over Time for a Specific User
@@ -12,7 +16,7 @@ SQL >
     WITH latest_signatures AS (
       SELECT 
         id,
-        toDate(created_on) as Day,
+        toDate(created_on) as day,
         status,
         ROW_NUMBER() OVER(PARTITION BY id ORDER BY created_on DESC) as row_num
       FROM 
@@ -27,19 +31,18 @@ SQL >
           )
         }}
     )
-
     SELECT 
-      Day,
+      day,
       status,
-      COUNT(id) as Status_Count
+      COUNT(id) as status_count
     FROM 
       latest_signatures 
     WHERE 
       row_num = 1
     GROUP BY 
-      Day, 
+      day, 
       status 
     ORDER BY 
-      Day ASC
+      day ASC
 
 
