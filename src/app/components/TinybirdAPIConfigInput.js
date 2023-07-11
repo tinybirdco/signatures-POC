@@ -18,9 +18,14 @@ export default function TinybirdAPIConfigInput({ token, host, setHost, setToken 
             <Grid
                 numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
             >
+                <Col numColSpan={1} numColSpanLg={4}>
+                    <Card>
+                        <Title>Dashboard Config</Title>
+                    </Card>
+                </Col >
                 <Col numColSpan={1} numColSpanLg={2}>
                     <Card>
-                        <Text>Token</Text>
+                        <Text>Tinybird Token</Text>
                         <TextInput
                             value={token}
                             text="Your API token from Tinybird"
@@ -31,7 +36,7 @@ export default function TinybirdAPIConfigInput({ token, host, setHost, setToken 
                 </Col>
                 <Col numColSpan={1} numColSpanLg={2}>
                     <Card >
-                        <Text>Host</Text>
+                        <Text>Tinybird Host</Text>
                         <Select
                             value={host}
                             onValueChange={(value) => setHost(value)}

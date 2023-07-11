@@ -54,13 +54,9 @@ export default function Dashboard() {
         to: new Date()
     });
 
-
-
     let date_from_ratio_graph = dates_ratio_graph.from ? new Date(dates_ratio_graph.from.getTime() - dates_ratio_graph.from.getTimezoneOffset() * 60000).toISOString().substring(0, 10) : new Date(2023, 5, 1).toISOString().substring(0, 10);
     let date_to_ratio_graph = dates_ratio_graph.to ? new Date(dates_ratio_graph.to.getTime() - dates_ratio_graph.to.getTimezoneOffset() * 60000 + 60000 * 60 * 24 - 1).toISOString().substring(0, 10) : date_from_ratio_graph;
-
     let dates_from_new_signatures_graph = dates_new_signatures_graph.from.toISOString().substring(0, 10) ? new Date(dates_new_signatures_graph.from.getTime() - dates_new_signatures_graph.from.getTimezoneOffset() * 60000).toISOString().substring(0, 10) : new Date(2023, 5, 1).toISOString().substring(0, 10);
-
     let dates_to_new_signatures_graph = dates_new_signatures_graph.to.toISOString().substring(0, 10) ? new Date(dates_new_signatures_graph.to.getTime() - dates_new_signatures_graph.to.getTimezoneOffset() * 60000 + 60000 * 60 * 24 - 1).toISOString().substring(0, 10) : dates_from_new_signatures_graph;
 
 
@@ -99,7 +95,6 @@ export default function Dashboard() {
         "percentage_complete": 0,
         "color": 'grey',
     }]);
-
     const [newSignaturesPerDay, setNewSignaturesPerDay] = useState([{
         "day": "",
         "new_signatures": 0
@@ -110,9 +105,7 @@ export default function Dashboard() {
     let api_ranking_of_top_accounts_creating_signatures = getApiRankingOfTopAccountsCreatingSignaturesUrl(host, token)
     let api_total_signatures_per_month = getApiTotalSignaturesPerMonthUrl(host, token);
     let api_user_completeness_of_signatures = getApiUserCompletenessOfSignaturesUrl(host, token, account_id);
-
     let api_ratio_of_filters = getApiRatioOfFiltersUrl(host, token, date_from_ratio_graph, date_to_ratio_graph);
-
     let api_new_signatures_per_day = getApiNewSignaturesPerDay(host, token, dates_from_new_signatures_graph, dates_to_new_signatures_graph);
 
     useEffect(() => {
@@ -292,12 +285,12 @@ export default function Dashboard() {
                 <Grid
                     numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
                 >
-                    <Col numColSpan={1} numColSpanLg={2}>
+                    <Col numColSpan={1} numColSpanLg={4}>
                         <Card>
                             <Title>User Dashboard</Title>
                         </Card>
                     </Col >
-                    <Col numColSpan={1} numColSpanLg={2}>
+                    <Col numColSpan={1} numColSpanLg={4}>
                         <Card >
                             <Text>Account</Text>
                             <Select
