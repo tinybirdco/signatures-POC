@@ -8,7 +8,10 @@ This repository is dedicated to generating dummy data that mirrors the schema an
 
 ## Setup
 
-To run the data generator, you'll need to have Node.js and npm installed on your computer. Then, follow these steps:
+### Requirements
+
+* Node.js < v. 18
+* Python < v. 3.8
 
 1. Setup your Tinybird account
 
@@ -73,4 +76,4 @@ This project is licensed under the MIT License.
 
 ## Authors
 
-- [Joe Karlsson](https://github.com/joekarlsson)
+* [Joe Karlsson](https://github.com/joekarlsson)
