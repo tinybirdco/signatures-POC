@@ -11,6 +11,7 @@ import {
     Title,
     Grid,
     DonutChart,
+    LineChart,
     DateRangePicker,
     Legend,
     ProgressBar,
@@ -32,6 +33,7 @@ import {
     getApiRankingOfTopAccountsCreatingSignaturesUrl,
     getApiTotalSignaturesPerMonthUrl,
     getApiUserCompletenessOfSignaturesUrl,
+    getApiNewSignaturesPerDay,
     handleInputTokenChange,
     percentageFormatter,
     numberDataFormatter,
@@ -42,14 +44,25 @@ const TINYBIRD_TOKEN = process.env.NEXT_PUBLIC_TINYBIRD_TOKEN;
 
 export default function Dashboard() {
 
-    const [dates, setDates] = useState({
+    const [dates_ratio_graph, setDatesRatioGraph] = useState({
         from: new Date(2023, 5, 1),
         to: new Date()
     });
 
-    // const now = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
-    let date_from = dates.from ? new Date(dates.from.getTime() - dates.from.getTimezoneOffset() * 60000).toISOString().substring(0, 10) : new Date(2023, 5, 1).toISOString().substring(0, 10);
-    let date_to = dates.to ? new Date(dates.to.getTime() - dates.to.getTimezoneOffset() * 60000 + 60000 * 60 * 24 - 1).toISOString().substring(0, 10) : date_from;
+    const [dates_new_signatures_graph, setDatesNewSignatureGraph] = useState({
+        from: new Date(2023, 5, 1),
+        to: new Date()
+    });
+
+
+
+    let date_from_ratio_graph = dates_ratio_graph.from ? new Date(dates_ratio_graph.from.getTime() - dates_ratio_graph.from.getTimezoneOffset() * 60000).toISOString().substring(0, 10) : new Date(2023, 5, 1).toISOString().substring(0, 10);
+    let date_to_ratio_graph = dates_ratio_graph.to ? new Date(dates_ratio_graph.to.getTime() - dates_ratio_graph.to.getTimezoneOffset() * 60000 + 60000 * 60 * 24 - 1).toISOString().substring(0, 10) : date_from_ratio_graph;
+
+    let dates_from_new_signatures_graph = dates_new_signatures_graph.from.toISOString().substring(0, 10) ? new Date(dates_new_signatures_graph.from.getTime() - dates_new_signatures_graph.from.getTimezoneOffset() * 60000).toISOString().substring(0, 10) : new Date(2023, 5, 1).toISOString().substring(0, 10);
+
+    let dates_to_new_signatures_graph = dates_new_signatures_graph.to.toISOString().substring(0, 10) ? new Date(dates_new_signatures_graph.to.getTime() - dates_new_signatures_graph.to.getTimezoneOffset() * 60000 + 60000 * 60 * 24 - 1).toISOString().substring(0, 10) : dates_from_new_signatures_graph;
+
 
     const [token, setToken] = useState(TINYBIRD_TOKEN || '');
     const [host, setHost] = useState(TINYBIRD_HOST || 'api.tinybird.co');
@@ -87,12 +100,20 @@ export default function Dashboard() {
         "color": 'grey',
     }]);
 
-    const api_ratio_of_filters = getApiRatioOfFiltersUrl(host, token, date_from, date_to);
+    const [newSignaturesPerDay, setNewSignaturesPerDay] = useState([{
+        "day": "",
+        "new_signatures": 0
+    }]);
+
     let api_signatures_expiring_soon = getApiSignaturesExpiringSoonUrl(host, token)
     let api_ranking_of_top_accounts_with_expired_signatures = getApiRankingOfTopAccountsWithExpiredSignaturesUrl(host, token)
     let api_ranking_of_top_accounts_creating_signatures = getApiRankingOfTopAccountsCreatingSignaturesUrl(host, token)
     let api_total_signatures_per_month = getApiTotalSignaturesPerMonthUrl(host, token);
     let api_user_completeness_of_signatures = getApiUserCompletenessOfSignaturesUrl(host, token, account_id);
+
+    let api_ratio_of_filters = getApiRatioOfFiltersUrl(host, token, date_from_ratio_graph, date_to_ratio_graph);
+
+    let api_new_signatures_per_day = getApiNewSignaturesPerDay(host, token, dates_from_new_signatures_graph, dates_to_new_signatures_graph);
 
     useEffect(() => {
         fetchTinybirdUrl(api_ratio_of_filters, set_ratio_of_filters)
@@ -112,7 +133,9 @@ export default function Dashboard() {
     useEffect(() => {
         fetchTinybirdUrl(api_user_completeness_of_signatures, setUserCompletenessOfSignatures)
     }, [api_user_completeness_of_signatures]);
-
+    useEffect(() => {
+        fetchTinybirdUrl(api_new_signatures_per_day, setNewSignaturesPerDay)
+    }, [api_new_signatures_per_day]);
 
     return (
         <>
@@ -154,7 +177,7 @@ export default function Dashboard() {
                         </Card>
                     </Col >
 
-                    <Col numColSpan={1} numColSpanLg={3}>
+                    <Col numColSpan={1} numColSpanLg={2}>
                         <Card>
                             <Title>Top accounts creating signatures</Title>
                             <Subtitle>
@@ -196,11 +219,11 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    <Col numColSpan={1} numColSpanLg={2}>
+                    <Col numColSpan={1} numColSpanLg={1}>
                         <Card>
                             <Title>Ratio of signatures by Date</Title>
                             <DonutChart
-                                className="mt-6"
+                                className="mt-8"
                                 label="status"
                                 data={ratio_of_filters}
                                 category="percentage"
@@ -214,8 +237,8 @@ export default function Dashboard() {
                                 colors={["amber", "indigo", "rose", "cyan", "slate", "violet", "indigo", "amber", "cyan"]}
                             />
                             <DateRangePicker
-                                value={dates}
-                                onValueChange={setDates}
+                                value={dates_ratio_graph}
+                                onValueChange={setDatesRatioGraph}
                                 enableYearPagination={false}
                                 dropdownPlaceholder="Pick dates"
                                 className="mt-2 mt-auto"
@@ -236,6 +259,29 @@ export default function Dashboard() {
                                     </ListItem>
                                 ))}
                             </List>
+                        </Card>
+                    </Col>
+                    <Col numColSpan={1} numColSpanLg={3}>
+
+                        <Card>
+                            <Title>New Signatures Per Day</Title>
+                            <LineChart
+                                className="mt-6"
+                                data={newSignaturesPerDay}
+                                index="day"
+                                categories={["new_signatures"]}
+                                colors={["emerald"]}
+                                valueFormatter={numberDataFormatter}
+                                yAxisWidth={40}
+                            />
+                            <DateRangePicker
+                                value={dates_ratio_graph}
+                                onValueChange={setDatesNewSignatureGraph}
+                                enableYearPagination={false}
+                                dropdownPlaceholder="Pick dates"
+                                className="mt-2 mt-auto"
+                                enableSelect={true}
+                            />
                         </Card>
                     </Col>
 
@@ -278,13 +324,13 @@ export default function Dashboard() {
 
                             <List>
                                 {userCompletnessOfSignatures.map((item) => (
-
                                     <Card className="max-w-sm mx-auto" key={item.signature_id}>
                                         <Flex>
                                             <Text>{item.percentage_complete}%</Text>
+                                            <Text>{(item.signature_id).substring(0, 7)}</Text>
                                             <Text>{item.status}</Text>
                                         </Flex>
-                                        <ProgressBar value={item.percentage} color={item.color} className="mt-3" />
+                                        <ProgressBar value={item.percentage_complete} color={item.color} className="mt-3" />
                                     </Card>
                                 ))}
                             </List>

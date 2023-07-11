@@ -17,6 +17,8 @@ const getApiTotalSignaturesPerMonthUrl = (host, token) =>
 const getApiUserCompletenessOfSignaturesUrl = (host, token, account_id) =>
     `https://${host}/v0/pipes/user_completeness_of_signatures.json?account_id=${account_id}&token=${token}`;
 
+const getApiNewSignaturesPerDay = (host, token, dateFrom, dateTo) => `https://${host}/v0/pipes/new_signatures_per_day.json?token=${token}${dateFrom ? `&date_from=${dateFrom}` : ''}${dateTo ? `&date_to=${dateTo}` : ''}`;
+
 const transformData = (data) => {
     // Create a hashmap for easy access and manipulation of the data
     let map = data.reduce((acc, curr) => {
@@ -78,6 +80,7 @@ export {
     getApiRankingOfTopAccountsCreatingSignaturesUrl,
     getApiTotalSignaturesPerMonthUrl,
     getApiUserCompletenessOfSignaturesUrl,
+    getApiNewSignaturesPerDay,
     validateInputToken,
     handleInputTokenChange,
     percentageFormatter,

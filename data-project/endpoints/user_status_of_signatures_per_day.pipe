@@ -1,0 +1,45 @@
+DESCRIPTION >
+	Status of Signatures Over Time for a Specific User
+
+
+NODE user_status_of_signatures_per_day_0
+DESCRIPTION >
+    Status of Signatures Over Time for a Specific User
+
+SQL >
+
+    %
+    WITH latest_signatures AS (
+      SELECT 
+        id,
+        toDate(created_on) as Day,
+        status,
+        ROW_NUMBER() OVER(PARTITION BY id ORDER BY created_on DESC) as row_num
+      FROM 
+        signatures 
+      WHERE 
+        account_id = {{
+          String(
+            account_id,
+            default='65827',
+            description="The account_id of the user",
+            required=True,
+          )
+        }}
+    )
+
+    SELECT 
+      Day,
+      status,
+      COUNT(id) as Status_Count
+    FROM 
+      latest_signatures 
+    WHERE 
+      row_num = 1
+    GROUP BY 
+      Day, 
+      status 
+    ORDER BY 
+      Day ASC
+
+

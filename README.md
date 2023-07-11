@@ -39,7 +39,15 @@ Go to [https://ui.tinybird.co/tokens](https://ui.tinybird.co/tokens) and copy th
 
 ⚠️Warning! The Admin token, the one you copied following this guide, is your admin token. Don't share it or publish it in your application. You can manage your tokens via API or using the Auth Tokens section in the UI. More detailed info at [Auth Tokens management](https://www.tinybird.co/docs/api-reference/token-api.html)
 
-4. Start generating data!
+4. Push the data project to your Tinybird workspace
+
+Push the data project —datasources, pipes and fixtures— to your workspace
+
+```bash
+tb push --fixtures
+```
+
+5. Start generating data!
 
 In the terminal, run the following command:
 
@@ -49,13 +57,17 @@ npm run seed
 
 Go to your [Tinybird workspace](https://ui.tinybird.co) and check the data is flowing.
 
-5. Run the Tremor Dashboard
+6. Update environment variables
+
+Change `NEXT_PUBLIC_TINYBIRD_TOKEN` in the `.env` file to the token you copied in step 3.
+
+7. Run the Tremor Dashboard
 
 ```bash
 npm run dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+8. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ### License
 

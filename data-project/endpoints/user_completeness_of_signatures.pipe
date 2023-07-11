@@ -10,41 +10,54 @@ NODE user_completeness_of_signatures_0
 SQL >
 
     %
+    WITH latest_signatures AS (
+        SELECT 
+            account_id,
+            id AS signature_id,
+            status,
+            created_on,
+            ROW_NUMBER() OVER(PARTITION BY id ORDER BY created_on DESC) AS row_num
+        FROM 
+            signatures
+        WHERE
+            account_id = {{
+                String(
+                    account_id,
+                    description="The account_id of the user",
+                    required=False,
+                    default='65827',
+                )
+            }}
+    )
+
     SELECT 
-      account_id,
-      id as signature_id, 
-      status,
-      CASE
-        WHEN status = 'in_queue' THEN 5
-        WHEN status = 'ready' THEN 7
-        WHEN status = 'signing' THEN 50
-        WHEN status IN ('completed', 'expired', 'canceled', 'declined') THEN 100
-        WHEN status = 'error' THEN 0
-        ELSE 0
-      END as percentage_complete,
-      CASE
-        WHEN status = 'in_queue' THEN 'orange'
-        WHEN status = 'ready' THEN 'teal'
-        WHEN status = 'signing' THEN 'yellow'
-        WHEN status IN ('completed', 'expired', 'canceled', 'declined') THEN 'blue'
-        WHEN status = 'error' THEN 'red'
-        ELSE 'grey'
-      END as color
+        account_id,
+        signature_id,
+        status,
+        CASE
+            WHEN status = 'in_queue' THEN 5
+            WHEN status = 'ready' THEN 7
+            WHEN status = 'signing' THEN 50
+            WHEN status IN ('completed', 'expired', 'canceled', 'declined') THEN 100
+            WHEN status = 'error' THEN 0
+            ELSE 0
+        END as percentage_complete,
+        CASE
+            WHEN status = 'in_queue' THEN 'orange'
+            WHEN status = 'ready' THEN 'teal'
+            WHEN status = 'signing' THEN 'yellow'
+            WHEN status IN ('completed', 'expired', 'canceled', 'declined') THEN 'blue'
+            WHEN status = 'error' THEN 'red'
+            ELSE 'grey'
+        END as color
     FROM 
-      signatures 
-    WHERE
-        account_id
-        = {{
-            String(
-                account_id,
-                description="The account_id of the user",
-                required=False,
-                default='65827',
-            )
-        }}
+        latest_signatures
+    -- WHERE 
+    --     row_num = 1
+    --     AND status NOT IN ('completed', 'expired', 'canceled', 'declined')
     ORDER BY 
-      percentage_complete ASC
-    LIMIT
-      10
+        percentage_complete DESC
+    -- LIMIT 
+    --     10
 
 
