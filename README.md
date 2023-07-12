@@ -54,11 +54,13 @@ npm run seed
 
 Go to your [Tinybird workspace](https://ui.tinybird.co) and check the data is flowing.
 
-5. Update environment variables
+5. Copy the environment variables to .env
 
-Change `NEXT_PUBLIC_TINYBIRD_TOKEN` in the `.env` file to the token you copied in step 3.
+Be sure to paste the token from Step 3 into the `.env` file.
 
-6. Run the Tremor Dashboard
+```bash
+
+1. Run the Dashboard locally
 
 ```bash
 npm run dev

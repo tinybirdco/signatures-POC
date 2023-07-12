@@ -3,3 +3,4 @@ python3 -mvenv .e
 pip install tinybird-cli
 tb auth --interactivex
 cd data-project && tb push --fixtures && cd ..
+cp .env.example .env

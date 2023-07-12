@@ -1,0 +1,6 @@
+dependencies:
+  npmjs.com: ^9
+  nodejs.org: ^18
+  python.org: ^3.9
+env:
+  NODE_ENV: dev
