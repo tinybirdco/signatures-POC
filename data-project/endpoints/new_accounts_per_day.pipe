@@ -2,9 +2,10 @@ TOKEN "read_all_pipes_token" READ
 
 TOKEN "new_accounts_per_day_endpoint_read_5159" READ
 
-NODE new_accounts_per_day_0
+NODE endpoint
 SQL >
 
+    %
     SELECT 
       toDate(created_on) as Day, 
       count(account_id) as New_Accounts 
@@ -14,7 +15,6 @@ SQL >
       Day 
     ORDER BY 
       Day ASC
-    LIMIT
-      90
+    LIMIT {{Int8(limit, 90, description="The number of rows accounts to retrieve", required=False)}}
 
 

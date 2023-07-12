@@ -1,0 +1,30 @@
+TOKEN "user_signature_feed_endpoint_read_7586" READ
+
+NODE endpoint
+SQL >
+
+    %
+    SELECT 
+      s.signature_id,
+      a.person as signed_by,
+      a.organization,
+      s.status,
+      s.created_on as action_date
+    FROM 
+      signatures s
+    JOIN
+      accounts a ON s.account_id = a.account_id
+    WHERE 
+
+      a.account_id = {{
+          String(
+            account_id,
+            default='32947',
+            description="The account_id of the user",
+            required=True,
+          )
+        }}
+    ORDER BY 
+      s.created_on DESC
+
+

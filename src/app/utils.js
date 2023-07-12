@@ -40,6 +40,10 @@ const getApiUserCompletenessOfSignaturesUrl = (host, token, account_id) =>
 
 const getApiUserStatusOfSignaturesPerDay = (host, token, account_id) =>
     `https://${host}/v0/pipes/user_status_of_signatures_per_day.json?account_id=${account_id}&token=${token}`;
+// const getApiUserStatusOfSignaturesPerDay = (host, token, account_id) =>
+//     `https://${host}/v0/pipes/user_signature_feed.json?account_id=${account_id}&token=${token}`;
+
+
 
 const transformData = (data) => {
     // Create a hashmap for easy access and manipulation of the data

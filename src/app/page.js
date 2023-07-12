@@ -67,7 +67,8 @@ export default function Dashboard() {
     const [token, setToken] = useState(TINYBIRD_TOKEN || '');
     const [host, setHost] = useState(TINYBIRD_HOST || 'api.tinybird.co');
     const [account, setAccount] = useState({
-        "account_id": 64098,
+        "account_id": 94757,
+        "organization": "",
         "certified_SMS": 0,
         "certified_email": 0,
         "created_on": "",
@@ -85,14 +86,16 @@ export default function Dashboard() {
         "total_signatures": 0,
     }]);
     const [expiring_signatures, setExpiringSignatures] = useState([{
+        "signature_id": "",
         "account_id": '',
         "until": '',
     }]);
     const [top_accounts_with_expired_signatures, setTopExpiringAccounts] = useState([{
-        "name": '',
+        "organization": "",
         "value": 0,
     }]);
     const [ranking_of_top_accounts_creating_signatures, setTopAccounts] = useState([{
+        "organization": "",
         "account_id": '',
         "total_signatures": 0,
     }]);
@@ -108,7 +111,8 @@ export default function Dashboard() {
         "new_signatures": 0
     }]);
     const [tenRandomUsers, setTenRandomUsers] = useState([{
-        "account_id": 64098,
+        "account_id": 94757,
+        "organization": "",
         "certified_SMS": 0,
         "certified_email": 0,
         "created_on": "",
@@ -211,7 +215,7 @@ export default function Dashboard() {
                         </Card>
                     </Col >
 
-                    <Col numColSpan={1} numColSpanLg={2}>
+                    <Col numColSpan={1} numColSpanLg={3}>
                         <Card>
                             <Title>Top accounts creating signatures</Title>
                             <Subtitle>
@@ -220,26 +224,26 @@ export default function Dashboard() {
                             <BarChart
                                 className="mt-6"
                                 data={ranking_of_top_accounts_creating_signatures}
-                                index="account_id"
+                                index="organization"
                                 categories={["total_signatures"]}
                                 colors={["blue", "red"]}
                                 valueFormatter={numberDataFormatter}
                                 yAxisWidth={48}
                                 showXAxis={true}
-                                autoMinValue={true}
+
                             />
                         </Card>
                     </Col >
 
                     <Col numColSpan={1} numColSpanLg={1}>
                         <Card>
-                            <Title>Ranking of the top accounts having signatures expired</Title>
+                            <Title>Ranking of the top accounts having expired signatures</Title>
                             <Subtitle>
                                 Ranked from highest to lowest
                             </Subtitle>
                             <Flex className="mt-4">
                                 <Text>
-                                    <Bold>Account ID</Bold>
+                                    <Bold>Organization</Bold>
                                 </Text>
                                 <Text>
                                     <Bold>Expired Signatures</Bold>
@@ -328,13 +332,13 @@ export default function Dashboard() {
                 >
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card>
-                            <Title>User Dashboard</Title>
+                            <Title>Organization Dashboard</Title>
                         </Card>
                     </Col >
 
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card >
-                            <Text>Account</Text>
+                            <Text>Organization</Text>
                             <Select
                                 value={account}
                                 onValueChange={(value) => setAccount(value)}
@@ -342,9 +346,9 @@ export default function Dashboard() {
                                 {tenRandomUsers.map((account) => (
                                     <SelectItem key={account.account_id}
                                         value={account}
-                                        text={account.account_id}
+                                        text={account.organization}
                                     >
-                                        {account.account_id}
+                                        {account.organization}
                                     </SelectItem>
                                 ))}
                             </Select>
@@ -355,7 +359,8 @@ export default function Dashboard() {
                         <Card >
                             <Text>Account Info</Text>
                             <Flex justifyContent="right" alignItems="center">
-                                <Badge size="md">Name: {account.person}</Badge>
+                                <Badge size="md">Org Owner: {account.person}</Badge>
+                                <Badge size="md">Organization: {account.organization}</Badge>
                                 <Badge size="md">Account #: {account.account_id}</Badge>
                                 <Badge size="md">Email: {account.email}</Badge>
                                 <Badge size="md">Phone: {account.phone}</Badge>

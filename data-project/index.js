@@ -2,16 +2,27 @@ import { send_data_to_tinybird, read_tinyb_config } from "./utils/tinybird.js";
 import { faker } from '@faker-js/faker';
 
 let account_id_list = [];
+let canGenerateUUID = true;
+let randomInterval = faker.number.int({ min: 10, max: 50 });
+let signatureID = "86ea9a31-0884-4ce6-92b4-983c4be494a6"
 
-const generateSubscriptionPayload = (account_id, status, signatureType, id) => {
+function generateUUID() {
+    if (canGenerateUUID) {
+        canGenerateUUID = false;
+        setTimeout(() => canGenerateUUID = true, randomInterval); // Throttling interval is 1000ms. Change this value as per your needs.
+        signatureID = faker.string.uuid();
+    }
+    return signatureID
+}
+
+const generateSignaturePayload = (account_id, status, signatureType, id) => {
     // Types of electron signatures
     // Simple - Sign with one click or enter a PIN sent via SMS.
     // Advance(biometrics) -  Done with a pen stroke, just like signing on paper.
     // Advance(digital certificate) - The signatory uses their digital certificate, issued by third parties.
     // Qualified - The signatory uses a digital certificate issued by Signaturit.Our digital certificate is qualified.
-
     return {
-        id,
+        signature_id: id,
         status,
         signatureType,
         id: faker.string.uuid(),
@@ -21,7 +32,6 @@ const generateSubscriptionPayload = (account_id, status, signatureType, id) => {
         account_id,
         created_on: faker.date.recent({ days: 120 }),
         timestamp: Date.now(),
-        uuid: faker.string.uuid(),
     }
 }
 
@@ -52,12 +62,11 @@ const generateAccountPayload = () => {
 // Other person signs
 // The signature is finished (complete, expired, canceled, declined, error)
 const sendMessageAtRandomInterval = async (token) => {
-    let randomInterval = faker.number.int({ min: 10, max: 50 });
+    let canGenerateUUID = true;
 
     setInterval(async () => {
         randomInterval = faker.number.int({ min: 10, max: 50 });
-
-        const signatureID = faker.string.uuid();
+        signatureID = generateUUID();
 
         const statusList = ["in_queue", "ready", "signing", "completed", "expired", "canceled", "declined", "error"];
         const signatureTypeList = ["simple", "advance(biometrics)", "advance(digital certificate)", "qualified"];
@@ -71,17 +80,17 @@ const sendMessageAtRandomInterval = async (token) => {
         const accountId1 = account_id_list[faker.number.int({ min: 0, max: account_id_list.length - 1 })];
         // status either in_queue or ready
         const status1 = statusList[faker.number.int({ min: 0, max: 1 })];
-        let subscriptionPayload = generateSubscriptionPayload(accountId1, status1, signatureType, signatureID);
+        let subscriptionPayload = generateSignaturePayload(accountId1, status1, signatureType, signatureID);
         await send_data_to_tinybird("signatures", token, subscriptionPayload);
         console.log('Sending signature data to Tinybird');
 
         const accountId2 = account_id_list[faker.number.int({ min: 0, max: account_id_list.length - 1 })];
-        subscriptionPayload = generateSubscriptionPayload(accountId2, 'signing', signatureType, signatureID);
+        subscriptionPayload = generateSignaturePayload(accountId2, 'signing', signatureType, signatureID);
         await send_data_to_tinybird("signatures", token, subscriptionPayload);
         console.log('Sending signature data to Tinybird');
 
         const accountId3 = account_id_list[faker.number.int({ min: 0, max: account_id_list.length - 1 })];
-        subscriptionPayload = generateSubscriptionPayload(accountId3, 'signing', signatureType, signatureID);
+        subscriptionPayload = generateSignaturePayload(accountId3, 'signing', signatureType, signatureID);
         await send_data_to_tinybird("signatures", token, subscriptionPayload);
         console.log('Sending signature data to Tinybird');
 
@@ -92,9 +101,10 @@ const sendMessageAtRandomInterval = async (token) => {
             { weight: 0.5, value: 'declined' },
             { weight: 0.5, value: 'error' },
         ]) // 7.5/10 chance of being completed, 1/10 chance of being expired, 0.5/10 chance of being canceled, declined or error
-        subscriptionPayload = generateSubscriptionPayload(accountId1, finalStatus, signatureType, signatureID);
+        subscriptionPayload = generateSignaturePayload(accountId1, finalStatus, signatureType, signatureID);
         await send_data_to_tinybird("signatures", token, subscriptionPayload);
         console.log('Sending signature data to Tinybird');
+
     }, randomInterval);
 }
 

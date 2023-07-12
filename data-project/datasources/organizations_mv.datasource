@@ -1,0 +1,9 @@
+# Data Source created from Pipe 'all_unique_organizations'
+
+SCHEMA >
+    `organization` String,
+    `owner` SimpleAggregateFunction(min, String),
+    `org_created_date` SimpleAggregateFunction(min, DateTime64(3))
+
+ENGINE "AggregatingMergeTree"
+ENGINE_SORTING_KEY "organization"

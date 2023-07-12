@@ -4,10 +4,12 @@ DESCRIPTION >
 
 TOKEN "num_of_signatures_per_account_endpoint_read_2149" READ
 
-NODE endpoint
+TOKEN "read_all_pipes_token" READ
+
+NODE num_of_signatures_per_account_0
 SQL >
 
-    SELECT account_id, COUNT() AS signature_count
+    SELECT account_id, COUNT(*) AS signature_count
     FROM signatures
     GROUP BY account_id
     ORDER BY signature_count DESC

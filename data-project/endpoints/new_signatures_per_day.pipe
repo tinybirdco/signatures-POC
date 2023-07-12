@@ -2,34 +2,34 @@ TOKEN "read_all_pipes_token" READ
 
 TOKEN "new_signatures_per_day_endpoint_read_1543" READ
 
-NODE new_signatures_per_day_0
+NODE endpoint
 SQL >
 
     %
-    SELECT 
-      toDate(created_on) as day, 
-      count(id) as new_signatures 
-    FROM 
-      signatures 
-    WHERE 
-      created_on BETWEEN {{
-            String(
-                date_from,
-                description="The start date",
-                required=False,
-                default='2023-07-01',
-            )
-        }} AND {{
-            String(
-                date_to,
-                description="The end date",
-                required=False,
-                default='2023-08-10',
-            )
-        }}
-    GROUP BY 
-      day 
-    ORDER BY 
-      day ASC 
+        SELECT 
+          toDate(created_on) as day, 
+          count(id) as new_signatures 
+        FROM 
+          signatures 
+        WHERE 
+          created_on BETWEEN {{
+                String(
+                    date_from,
+                    description="The start date",
+                    required=False,
+                    default='2023-07-01',
+                )
+            }} AND {{
+                String(
+                    date_to,
+                    description="The end date",
+                    required=False,
+                    default='2023-08-10',
+                )
+            }}
+        GROUP BY 
+          day 
+        ORDER BY 
+          day ASC
 
 

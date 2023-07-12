@@ -6,7 +6,7 @@ TOKEN "read_all_pipes_token" READ
 
 TOKEN "user_status_of_signatures_per_day_endpoint_read_4885" READ
 
-NODE user_status_of_signatures_per_day_0
+NODE endpoint
 DESCRIPTION >
     Status of Signatures Over Time for a Specific User
 

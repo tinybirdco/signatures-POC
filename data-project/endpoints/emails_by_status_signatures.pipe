@@ -31,7 +31,7 @@ SQL >
 
 
 
-NODE emails_by_status_signatures_1
+NODE endpoint
 DESCRIPTION >
     Count of the number of signatures per status that are associated with an account.
 

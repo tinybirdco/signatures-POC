@@ -2,16 +2,16 @@ TOKEN "read_all_pipes_token" READ
 
 TOKEN "untitled_pipe_2573_endpoint_read_8223" READ
 
-NODE ten_random_users_0
+NODE endpoint
 SQL >
 
+    %
     SELECT 
       *
     FROM 
       accounts 
     ORDER BY 
       rand()
-    LIMIT 
-      10
+    LIMIT {{Int8(limit, 10, description="The number of rows accounts to retrieve", required=False)}}
 
 

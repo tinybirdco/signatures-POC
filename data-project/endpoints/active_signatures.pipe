@@ -6,7 +6,7 @@ TOKEN "active_signatures_endpoint_read_1015" READ
 
 TOKEN "read_all_pipes_token" READ
 
-NODE active_signatures_0
+NODE endpoint
 SQL >
 
     SELECT id, since, until

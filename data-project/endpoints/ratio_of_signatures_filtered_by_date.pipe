@@ -6,7 +6,7 @@ TOKEN "ratio_of_signatures_filtered_by_date_endpoint_read_3474" READ
 
 TOKEN "read_all_pipes_token" READ
 
-NODE ratio_of_signatures_filtered_by_date_0
+NODE endpoint
 SQL >
 
     %

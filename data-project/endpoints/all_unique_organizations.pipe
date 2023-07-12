@@ -1,0 +1,25 @@
+NODE untitled_pipe_3908_0
+SQL >
+
+    SELECT
+        organization,
+        MINSimpleState(person) AS owner,
+        MINSimpleState(created_on) AS org_created_date
+    FROM
+    (
+        SELECT
+            organization,
+            person,
+            created_on,
+            account_id,
+            ROW_NUMBER() OVER (PARTITION BY organization ORDER BY created_on ASC) AS rn
+        FROM accounts
+    ) AS subquery
+    WHERE subquery.rn = 1
+    GROUP BY organization
+
+TYPE materialized
+DATASOURCE organizations_mv
+ENGINE "AggregatingMergeTree"
+ENGINE_SORTING_KEY "organization"
+

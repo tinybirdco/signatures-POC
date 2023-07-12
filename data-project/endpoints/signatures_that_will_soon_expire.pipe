@@ -2,25 +2,24 @@ DESCRIPTION >
 	List of signatures about to expire. This endpoint can be used to trigger alerts.
 
 
+TOKEN "signatures_that_will_soon_expire_endpoint_read_5764" READ
+
 TOKEN "read_all_pipes_token" READ
 
 NODE endpoint
-DESCRIPTION >
-    This endpoit can be filter using the parameter but we also can provide a token with a row filter to make sure you only have access to your signatures.
-
 SQL >
 
     %
     SELECT 
-      id,
-      account_id,
-      signatureType, 
-      status
-    FROM signatures
-    WHERE
-        account_id = {{Int32(account, 48257, description="The account id to filter by",  required=True) }} and
-        until >= now() - interval 7 day
-        and status not in ('completed', 'ready')
-    ORDER BY until ASC
+      signature_id, 
+      account_id, 
+      until 
+    FROM 
+      signatures 
+    WHERE 
+      until >= now() AND dateDiff('day', now(), until) <= 7 
+    ORDER BY 
+      until ASC
+    LIMIT {{Int8(limit, 8, description="The number of rows accounts to retrieve", required=False)}}
 
 
