@@ -2,25 +2,33 @@ DESCRIPTION >
 	Ranking of the top accounts having signatures expired:
 
 
-TOKEN "ranking_of_top_accounts_with_expired_signatures_endpoint_read_4189" READ
-
 TOKEN "read_all_pipes_token" READ
 
-NODE ranking_of_top_accounts_with_expired_signatures_0
+TOKEN "ranking_of_top_accounts_with_expired_signatures_endpoint_read_2305" READ
+
+NODE endpoint
 SQL >
 
+    %
     SELECT 
-      account_id as name,
-      count(id) as value 
-    FROM 
-      signatures 
-    WHERE 
-      status = 'expired' 
-    GROUP BY 
-      account_id 
-    ORDER BY 
-      value DESC
-    LIMIT
-      7
+      account_id,
+      count() total
+    FROM signatures
+    WHERE
+        created_on
+        BETWEEN {{
+            Date(
+                start_date,
+                '2023-01-01',
+                description="Initial date",
+                required=True,
+            )
+        }}
+        AND {{ Date(end_date, '2024-01-01', description="End date", required=True) }}
+        and status = 'expired'
+    group by account_id
+    having total > 0
+    order by total desc
+    LIMIT {{Int8(limit, 10, description="The number of rows accounts to retrieve", required=False)}}
 
 

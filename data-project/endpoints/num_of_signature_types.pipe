@@ -4,11 +4,20 @@ DESCRIPTION >
 
 TOKEN "num_of_signature_types_endpoint_read_5348" READ
 
-TOKEN "read_all_pipes_token" READ
+NODE retrieve_by_month
+DESCRIPTION >
+    Retrieve signatures by month
 
-NODE num_of_signature_types_0
 SQL >
 
-    SELECT signatureType, COUNT(*) AS count FROM signatures GROUP BY signatureType
+    %
+    SELECT 
+      toStartOfMonth(created_on) month, 
+      signatureType, 
+      COUNT(id) AS count 
+    FROM signatures 
+    WHERE created_on BETWEEN {{Date(start_date, '2023-01-01', description="Initial date", required=True)}} 
+        AND {{Date(end_date, '2024-01-01', description="End date", required=True)}} 
+    GROUP BY month, signatureType
 
 
