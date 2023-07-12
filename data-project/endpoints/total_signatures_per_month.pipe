@@ -1,29 +1,74 @@
 DESCRIPTION >
-	Total number of signatures along time
+	Total number of signatures along time comparing with the previous period
 
-
-TOKEN "total_signatures_per_month_endpoint_read_4228" READ
 
 TOKEN "read_all_pipes_token" READ
 
-NODE total_signatures_per_month_0
+TOKEN "total_signatures_per_month_endpoint_read_4916" READ
+
+NODE data
 DESCRIPTION >
     Total number of signatures along time
 
 SQL >
 
+    %
     SELECT 
-      toStartOfMonth(created_on) as month, 
-      count(id) as total_signatures, 
-      signatureType 
+      toStartOfMonth(created_on) as month,
+      signatureType,
+      count(id) as total_signatures
     FROM 
-      signatures 
-    WHERE 
-      dateDiff('year', created_on, now()) <= 1 AND signatureType = "signatureType"
-    GROUP BY 
-      month, 
-      signatureType 
-    ORDER BY 
-      month DESC
+      signatures  
+    WHERE created_on BETWEEN {{Date(start_date, '2023-05-01', description="Initial date", required=True)}} 
+        AND {{Date(end_date, '2023-06-30', description="End date", required=True)}}
+        {% if defined(signatureType) and signatureType != 'ALL' %}
+          and signatureType = {{String(signatureType, 'ALL', description="Signature type", required=False)}}
+        {% end %}
+    GROUP BY month, signatureType
+
+
+
+NODE comparable
+SQL >
+
+    %
+       WITH
+          dateDiff(
+              'month',
+              toDate({{ Date(end_date, "2023-06-30", required=True) }}),
+              toDate({{ Date(start_date, "2023-05-01", required=True) }})
+          ) as diff
+      
+          SELECT 
+            toStartOfMonth(created_on) as month,
+            toStartOfMonth(created_on + interval ((-1)*diff) month) comp_month,
+            signatureType,
+            count(id) as total_signatures
+        FROM 
+          signatures  
+        WHERE created_on >= toDateTime(addMonths(toDate({{ Date(start_date, "2023-05-01", required=True) }}), diff+(-1)))
+            AND created_on < toDateTime(toDate({{ Date(start_date, "2023-05-01", required=True) }}))
+           {% if defined(signatureType) and signatureType != 'ALL' %}
+              and signatureType = {{String(signatureType, 'ALL', description="Signature type", required=False)}}
+            {% end %}
+        GROUP BY month, comp_month, signatureType
+   
+
+
+
+NODE endpoint
+SQL >
+
+    SELECT
+        d.month as month,
+        c.month as comp_month,
+        d.signatureType as signatureType,
+        d.total_signatures as total_signatures,
+        c.total_signatures as comp_total_signatures
+    FROM
+        data d
+    join comparable c on d.month = c.comp_month and d.signatureType = c.signatureType
+    ORDER BY month, signatureType
+
 
 

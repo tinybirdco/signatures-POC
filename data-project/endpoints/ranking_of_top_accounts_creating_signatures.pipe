@@ -2,23 +2,35 @@ DESCRIPTION >
 	Ranking of the top accounts creating signatures
 
 
-TOKEN "ranking_of_top_accounts_creating_signatures_endpoint_read_4001" READ
-
 TOKEN "read_all_pipes_token" READ
 
-NODE ranking_of_top_accounts_creating_signatures_0
+TOKEN "ranking_of_top_accounts_creating_signatures_endpoint_read_1912" READ
+
+NODE endpoint
 SQL >
 
+    %
     SELECT 
-      account_id, 
-      count(id) as total_signatures 
-    FROM 
-      signatures 
-    GROUP BY 
-      account_id 
-    ORDER BY 
-      total_signatures DESC
-    LIMIT
-      10
+      account_id,
+      {% if defined(completed) %}
+        countIf(status = 'completed') total
+      {% else %}
+        count() total
+      {% end %}
+    FROM signatures
+    WHERE
+        created_on
+        BETWEEN {{
+            Date(
+                start_date,
+                '2023-01-01',
+                description="Initial date",
+                required=True,
+            )
+        }}
+        AND {{ Date(end_date, '2024-01-01', description="End date", required=True) }}
+    group by account_id
+    having total > 0
+    order by total desc
 
 
