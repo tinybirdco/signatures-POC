@@ -15,17 +15,17 @@ SQL >
     %
     WITH latest_signatures AS (
       SELECT 
-        id,
+        signature_id,
         toDate(created_on) as day,
         status,
-        ROW_NUMBER() OVER(PARTITION BY id ORDER BY created_on DESC) as row_num
+        ROW_NUMBER() OVER(PARTITION BY signature_id ORDER BY created_on DESC) as row_num
       FROM 
         signatures 
       WHERE 
         account_id = {{
           String(
             account_id,
-            default='65827',
+            default='96649',
             description="The account_id of the user",
             required=True,
           )
@@ -34,7 +34,7 @@ SQL >
     SELECT 
       day,
       status,
-      COUNT(id) as status_count
+      COUNT(signature_id) as status_count
     FROM 
       latest_signatures 
     WHERE 

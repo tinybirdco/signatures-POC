@@ -10,7 +10,7 @@ NODE endpoint
 SQL >
 
     %
-    SELECT toStartOfMonth(created_on) month, signatureType, COUNT(id) AS count
+    SELECT toStartOfMonth(created_on) month, signatureType, COUNT(*) AS count
     FROM signatures
     WHERE
         created_on

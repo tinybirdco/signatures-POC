@@ -2,9 +2,7 @@ DESCRIPTION >
 	Total number of signatures along time comparing with the previous period
 
 
-TOKEN "total_signatures_per_month_endpoint_read_4228" READ
-
-TOKEN "read_all_pipes_token" READ
+TOKEN "total_signatures_per_month_endpoint_read_0437" READ
 
 NODE data
 DESCRIPTION >
@@ -16,11 +14,11 @@ SQL >
         SELECT 
           toStartOfMonth(created_on) as month,
           signatureType,
-          count(id) as total_signatures
+          count(signature_id) as total_signatures
         FROM 
           signatures  
-        WHERE created_on BETWEEN {{Date(start_date, '2023-05-01', description="Initial date", required=True)}} 
-            AND {{Date(end_date, '2023-06-30', description="End date", required=True)}}
+        WHERE created_on BETWEEN {{Date(start_date, '2022-01-01', description="Initial date", required=True)}} 
+            AND {{Date(end_date, '2023-07-15', description="End date", required=True)}}
             {% if defined(signatureType) and signatureType != 'ALL' %}
               and signatureType = {{String(signatureType, 'ALL', description="Signature type", required=False)}}
             {% end %}
@@ -43,7 +41,7 @@ SQL >
         toStartOfMonth(created_on) as month,
         toStartOfMonth(created_on + interval((-1) * diff) month) comp_month,
         signatureType,
-        count(id) as total_signatures
+        count(signature_id) as total_signatures
     FROM signatures
     WHERE
         created_on >= toDateTime(

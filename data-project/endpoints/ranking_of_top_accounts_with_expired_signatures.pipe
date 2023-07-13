@@ -29,6 +29,19 @@ SQL >
     group by account_id
     having total > 0
     order by total desc
-    LIMIT {{Int8(limit, 10, description="The number of rows accounts to retrieve", required=False)}}
+    LIMIT {{Int8(limit, 6, description="The number of rows accounts to retrieve", required=False)}}
+
+
+
+NODE endpoint_
+SQL >
+
+    %
+    SELECT
+       organization, 
+       total as value
+    FROM endpoint s
+    left join organizations o on s.account_id = o.org_id
+    LIMIT {{Int8(limit, 6, description="The number of rows accounts to retrieve", required=False)}}
 
 

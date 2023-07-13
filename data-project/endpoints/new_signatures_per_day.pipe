@@ -8,7 +8,7 @@ SQL >
     %
         SELECT 
           toDate(created_on) as day, 
-          count(id) as new_signatures 
+          count(signature_id) as new_signatures 
         FROM 
           signatures 
         WHERE 

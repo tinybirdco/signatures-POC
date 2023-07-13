@@ -12,8 +12,8 @@ SQL >
     %
     SELECT 
       status, 
-      count(id) as total_signatures, 
-      (count(id) * 100 / (SELECT count(*) FROM signatures WHERE created_on BETWEEN {{
+      count(signature_id) as total_signatures, 
+      (count(signature_id) * 100 / (SELECT count(*) FROM signatures WHERE created_on BETWEEN {{
             String(
                 date_from,
                 description="The start date",
