@@ -1,3 +1,4 @@
+import { createKey } from "next/dist/shared/lib/router/router.js";
 import { send_data_to_tinybird, read_tinyb_config } from "./utils/tinybird.js";
 import { faker } from '@faker-js/faker';
 
@@ -15,23 +16,26 @@ function generateUUID() {
     return signatureID
 }
 
-const generateSignaturePayload = (account_id, status, signatureType, id) => {
+const generateSignaturePayload = (account_id, status, signatureType, signature_id) => {
     // Types of electron signatures
     // Simple - Sign with one click or enter a PIN sent via SMS.
     // Advance(biometrics) -  Done with a pen stroke, just like signing on paper.
     // Advance(digital certificate) - The signatory uses their digital certificate, issued by third parties.
-    // Qualified - The signatory uses a digital certificate issued by Signaturit.Our digital certificate is qualified.
+    // Qualified - The signatory uses a digital certificate issued by Signaturit.
+    const since = faker.date.past({ years: 3 });
     return {
-        signature_id: id,
+        signature_id,
         status,
         signatureType,
-        id: faker.string.uuid(),
-        since: faker.date.recent({ days: 90 }),
-        until: faker.date.soon({ days: 90 }),
-        data: {},
+        since: since.toISOString().substring(0, 10),
+        until: (faker.date.between({
+            from: since,
+            to: '2024-01-01'
+        })).toISOString().substring(0, 10),
         account_id,
-        created_on: faker.date.recent({ days: 120 }),
+        created_on: (faker.date.past({ years: 3 })).toISOString().substring(0, 10),
         timestamp: Date.now(),
+        uuid: faker.string.uuid(),
     }
 }
 
@@ -51,7 +55,7 @@ const generateAccountPayload = () => {
         person: faker.person.fullName(),
         certified_email: faker.datatype.boolean(),
         photo_id_certified: faker.datatype.boolean(),
-        created_on: faker.date.recent({ days: 120 }),
+        created_on: (faker.date.between({ from: '2021-01-01', to: '2022-01-01' })).toISOString().substring(0, 10),
         timestamp: Date.now(),
     }
 }
@@ -62,8 +66,6 @@ const generateAccountPayload = () => {
 // Other person signs
 // The signature is finished (complete, expired, canceled, declined, error)
 const sendMessageAtRandomInterval = async (token) => {
-    let canGenerateUUID = true;
-
     setInterval(async () => {
         randomInterval = faker.number.int({ min: 10, max: 50 });
         signatureID = generateUUID();
@@ -105,6 +107,26 @@ const sendMessageAtRandomInterval = async (token) => {
         await send_data_to_tinybird("signatures", token, subscriptionPayload);
         console.log('Sending signature data to Tinybird');
 
+        //  Generates Historical Signature data
+        const randomAccountID = account_id_list[faker.number.int({ min: 0, max: account_id_list.length - 1 })];
+        const randomStatus = faker.helpers.weightedArrayElement([
+            { weight: 7.5, value: 'completed' },
+            { weight: 1, value: 'expired' },
+            { weight: 0.5, value: 'canceled' },
+            { weight: 0.5, value: 'declined' },
+            { weight: 0.5, value: 'error' },
+        ])
+        const randomSignatureType = signatureTypeList[faker.number.int({ min: 0, max: 3 })];
+        const randomSignatureID = faker.string.uuid();
+
+        const subscriptionPayloadHistorical = generateSignaturePayload(
+            randomAccountID,
+            randomStatus,
+            randomSignatureType,
+            randomSignatureID,
+        );
+        await send_data_to_tinybird("signatures", token, subscriptionPayloadHistorical);
+        console.log('Sending historical signature data to Tinybird');
     }, randomInterval);
 }
 

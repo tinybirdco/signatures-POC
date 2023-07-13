@@ -22,11 +22,11 @@ const getApiRatioOfFiltersUrl = (host, token, dateFrom, dateTo) =>
 const getApiSignaturesExpiringSoonUrl = (host, token) =>
     `https://${host}/v0/pipes/signatures_that_will_soon_expire.json?token=${token}`;
 
-const getApiRankingOfTopAccountsWithExpiredSignaturesUrl = (host, token) =>
-    `https://${host}/v0/pipes/ranking_of_top_accounts_with_expired_signatures.json?token=${token}`;
+const getApiRankingOfTopAccountsWithExpiredSignaturesUrl = (host, token, dateFrom, dateTo) =>
+    `https://${host}/v0/pipes/ranking_of_top_accounts_with_expired_signatures.json?token=${token}${dateFrom ? `&date_from=${dateFrom}` : ''}${dateTo ? `&date_to=${dateTo}` : ''}`;
 
-const getApiRankingOfTopAccountsCreatingSignaturesUrl = (host, token) =>
-    `https://${host}/v0/pipes/ranking_of_top_accounts_creating_signatures.json?token=${token}`;
+const getApiRankingOfTopAccountsCreatingSignaturesUrl = (host, token, dateFrom, dateTo) =>
+    `https://${host}/v0/pipes/ranking_of_top_accounts_creating_signatures.json?token=${token}${dateFrom ? `&date_from=${dateFrom}` : ''}${dateTo ? `&date_to=${dateTo}` : ''}`;
 
 const getApiTotalSignaturesPerMonthUrl = (host, token) =>
     `https://${host}/v0/pipes/total_signatures_per_month.json?token=${token}`;
