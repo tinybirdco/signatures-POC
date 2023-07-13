@@ -6,7 +6,7 @@ TOKEN "ranking_of_top_accounts_creating_signatures_endpoint_read_4001" READ
 
 TOKEN "read_all_pipes_token" READ
 
-NODE endpoint
+NODE retrieve_signatures
 SQL >
 
     %
@@ -32,5 +32,16 @@ SQL >
     group by account_id
     having total > 0
     order by total desc
+
+
+
+NODE endpoint
+SQL >
+
+    SELECT
+       organization, 
+       total
+    FROM retrieve_signatures s
+    left join organizations o on s.account_id = o.org_id
 
 
