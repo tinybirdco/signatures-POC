@@ -55,13 +55,15 @@ export default function Dashboard() {
     });
 
     let defaultDate = new Date(2023, 5, 1);
+    let defaultAccountID = 52860;
+    let defaultOrganization = "Nike";
     let date_from = getDateOrDefault(dates.from, defaultDate);
     let date_to = getNextDay(dates.to) || date_from;
 
     const [token, setToken] = useState(TINYBIRD_TOKEN || '');
     const [host, setHost] = useState(TINYBIRD_HOST || 'api.tinybird.co');
     const [account, setAccount] = useState({
-        "account_id": 52860,
+        "account_id": defaultAccountID,
         "organization": "",
         "certified_SMS": 0,
         "certified_email": 0,
@@ -101,11 +103,12 @@ export default function Dashboard() {
         "qualified": 0
     }]);
     const [newSignaturesPerDay, setNewSignaturesPerDay] = useState([{
-        "day": "",
-        "new_signatures": 0
-    }]);
+        "date": "",
+        "current_period_signatures": 0,
+        "prev_period_signatures": 0
+    },]);
     const [tenRandomUsers, setTenRandomUsers] = useState([{
-        "account_id": 52860,
+        "account_id": defaultAccountID,
         "organization": "",
         "certified_SMS": 0,
         "certified_email": 0,
@@ -266,10 +269,10 @@ export default function Dashboard() {
                     </Col>
 
                     <Col numColSpan={1} numColSpanLg={1}>
-                        <Card>
+                        <Card className='container mx-auto'>
                             <Title>Ratio of signatures by Date</Title>
                             <DonutChart
-                                className="mt-8"
+                                className="mt-2"
                                 label="status"
                                 data={ratio_of_filters}
                                 category="percentage"
@@ -278,7 +281,7 @@ export default function Dashboard() {
                                 colors={["amber", "indigo", "rose", "cyan", "slate", "violet", "indigo", "amber", "cyan",]}
                             />
                             <Legend
-                                className="mt-3"
+                                className="mt-2"
                                 categories={["in_queue", "ready", "signing", "completed", "expired", "canceled", "declined", "error"]}
                                 colors={["amber", "indigo", "rose", "cyan", "slate", "violet", "indigo", "amber", "cyan"]}
                             />
@@ -306,9 +309,9 @@ export default function Dashboard() {
                             <LineChart
                                 className="mt-6"
                                 data={newSignaturesPerDay}
-                                index="day"
-                                categories={["new_signatures"]}
-                                colors={["emerald"]}
+                                index="date"
+                                categories={["current_period_signatures", "prev_period_signatures"]}
+                                colors={["blue", "red"]}
                                 valueFormatter={numberDataFormatter}
                                 yAxisWidth={40}
                             />
@@ -334,6 +337,8 @@ export default function Dashboard() {
                             <Select
                                 value={account}
                                 onValueChange={(value) => setAccount(value)}
+                                defaultValue={defaultAccountID}
+                                placeholder={defaultOrganization}
                             >
                                 {tenRandomUsers.map((account) => (
                                     <SelectItem key={account.account_id}
