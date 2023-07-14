@@ -3,17 +3,6 @@ import { send_data_to_tinybird, read_tinyb_config } from "./utils/tinybird.js";
 import { faker } from '@faker-js/faker';
 
 let account_id_list = [];
-// let canGenerateUUID = true;
-// let signatureID = "86ea9a31-0884-4ce6-92b4-983c4be494a6"
-
-// function generateUUID(randomInterval) {
-//     if (canGenerateUUID) {
-//         canGenerateUUID = false;
-//         setTimeout(() => canGenerateUUID = true, randomInterval);
-//         signatureID = faker.string.uuid();
-//     }
-//     return signatureID
-// }
 
 const generateSignaturePayload = (account_id, status, signatureType, signature_id, since, until, created_on) => {
     // Types of electron signatures
@@ -69,7 +58,6 @@ async function sendMessageAtRandomInterval(token, callback) {
         const signatureTypeList = ["simple", "advance(biometrics)", "advance(digital certificate)", "qualified"];
         const signatureType = signatureTypeList[faker.number.int({ min: 0, max: 3 })];
         let signatureID = faker.string.uuid();
-
 
         let created_on = faker.date.past({ years: 3 })
         let since = faker.date.soon({ days: 3, refDate: created_on })

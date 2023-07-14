@@ -38,7 +38,7 @@ SQL >
 
     %
     SELECT
-       organization, 
+       organization as name, 
        total as value
     FROM endpoint s
     left join organizations o on s.account_id = o.org_id

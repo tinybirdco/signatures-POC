@@ -33,3 +33,66 @@ SQL >
           day ASC
 
 
+
+NODE new_signatures_per_day_1
+SQL >
+
+    %
+    SELECT 
+        this_year.date AS date, 
+        this_year.new_signatures AS current_period_signatures, 
+        prev_year.new_signatures AS prev_period_signatures
+    FROM 
+        (SELECT 
+            created_on AS date, 
+            count(signature_id) AS new_signatures
+        FROM 
+            signatures
+        WHERE 
+            created_on BETWEEN {{
+                String(
+                    date_from,
+                    description="The start date",
+                    required=False,
+                    default='2023-01-01',
+                )
+            }} AND {{
+                String(
+                    date_to,
+                    description="The end date",
+                    required=False,
+                    default='2023-12-31',
+                )
+            }}
+        GROUP BY 
+            date) AS this_year
+    ANY LEFT JOIN
+        (SELECT 
+            created_on AS date, 
+            count(signature_id) AS new_signatures
+        FROM 
+            signatures
+        WHERE 
+            created_on BETWEEN (toDate({{
+                String(
+                    date_from,
+                    description="The start date",
+                    required=False,
+                    default='2023-01-01',
+                )
+            }}) - interval 1 year) AND (toDate({{
+                String(
+                    date_to,
+                    description="The end date",
+                    required=False,
+                    default='2023-12-31',
+                )
+            }}) - interval 1 year)
+        GROUP BY 
+            date) AS prev_year
+    ON 
+        this_year.date = toDate(addYears(prev_year.date, 1))
+    ORDER BY 
+        this_year.date
+
+

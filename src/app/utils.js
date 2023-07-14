@@ -15,7 +15,6 @@ function getNextDay(date) {
     }
 }
 
-
 const getApiRatioOfFiltersUrl = (host, token, dateFrom, dateTo) =>
     `https://${host}/v0/pipes/ratio_of_signatures_filtered_by_date.json?token=${token}${dateFrom ? `&date_from=${dateFrom}` : ''}${dateTo ? `&date_to=${dateTo}` : ''}`;
 
@@ -38,12 +37,9 @@ const getApiTenRandomUsers = (host, token) => `https://${host}/v0/pipes/ten_rand
 const getApiUserCompletenessOfSignaturesUrl = (host, token, account_id) =>
     `https://${host}/v0/pipes/user_completeness_of_signatures.json?account_id=${account_id}&token=${token}`;
 
-const getApiUserStatusOfSignaturesPerDay = (host, token, account_id) =>
-    `https://${host}/v0/pipes/user_status_of_signatures_per_day.json?account_id=${account_id}&token=${token}`;
-// const getApiUserStatusOfSignaturesPerDay = (host, token, account_id) =>
-//     `https://${host}/v0/pipes/user_signature_feed.json?account_id=${account_id}&token=${token}`;
+const getApiUserStatusOfSignaturesPerDay = (host, token, dateFrom, dateTo, account_id) => `https://${host}/v0/pipes/user_status_of_signatures_per_day.json?account_id=${account_id}&token=${token}${dateFrom ? `&date_from=${dateFrom}` : ''}${dateTo ? `&date_to=${dateTo}` : ''}`;
 
-
+const getApiUserFeed = (host, token, dateFrom, dateTo, account_id) => `https://${host}/v0/pipes/user_signature_feed.json?account_id=${account_id}&token=${token}${dateFrom ? `&date_from=${dateFrom}` : ''}${dateTo ? `&date_to=${dateTo}` : ''}`;
 
 const transformData = (data) => {
     // Create a hashmap for easy access and manipulation of the data
@@ -135,6 +131,7 @@ export {
     getApiNewSignaturesPerDay,
     getApiUserStatusOfSignaturesPerDay,
     getApiTenRandomUsers,
+    getApiUserFeed,
     validateInputToken,
     handleInputTokenChange,
     percentageFormatter,

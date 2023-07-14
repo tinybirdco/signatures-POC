@@ -5,26 +5,53 @@ SQL >
 
     %
     SELECT 
-      s.signature_id,
-      a.person as signed_by,
-      a.organization,
-      s.status,
-      s.created_on as action_date
+      s1.signature_id as signature_id,
+      s1.signatureType as signatureType,
+      s1.created_on AS signature_created_on,
+      s1.since as since,
+      s1.until as until,
+      s2.status AS signing_status,
+      s2.timestamp AS signing_timestamp,
+      s2.account_id AS signing_account_id,
+      a.email AS signing_email,
+      s2.uuid as uuid
     FROM 
-      signatures s
+      signatures AS s1
+    JOIN 
+      signatures AS s2 ON s1.signature_id = s2.signature_id
     JOIN
-      accounts a ON s.account_id = a.account_id
+      accounts AS a ON s2.account_id = a.account_id
     WHERE 
-
-      a.account_id = {{
+      s1.account_id = {{
           String(
             account_id,
-            default='32947',
+            default='98071',
             description="The account_id of the user",
             required=True,
           )
         }}
     ORDER BY 
-      s.created_on DESC
+      s2.timestamp DESC
+    LIMIT 21
+
+
+
+NODE user_signature_feed_1
+SQL >
+
+    SELECT
+        s.created_on AS signature_created_on,
+        s.signature_id,
+        s.status,
+        s.signatureType,
+        s.since,
+        s.until,
+        s.timestamp AS signature_timestamp,
+        a.account_id,
+        a.email
+    FROM signatures AS s
+    JOIN accounts AS a ON s.account_id = a.account_id
+    WHERE s.signature_id = '66b23ab4-c12e-4968-af1f-db9477cb88a9'
+    ORDER BY signature_created_on DESC
 
 

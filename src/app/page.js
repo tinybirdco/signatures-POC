@@ -13,6 +13,7 @@ import {
     Grid,
     DonutChart,
     LineChart,
+    Metric,
     DateRangePicker,
     Legend,
     ProgressBar,
@@ -39,6 +40,7 @@ import {
     getApiNewSignaturesPerDay,
     getApiUserStatusOfSignaturesPerDay,
     getApiTenRandomUsers,
+    getApiUserFeed,
     handleInputTokenChange,
     percentageFormatter,
     numberDataFormatter,
@@ -133,6 +135,18 @@ export default function Dashboard() {
         "status": "",
         "status_Count": 0
     }]);
+    const [user_feed, setUserFeed] = useState([{
+        "signature_id": "",
+        "signatureType": "",
+        "signature_created_on": "",
+        "since": "",
+        "until": "",
+        "signing_status": "",
+        "signing_timestamp": 0,
+        "signing_account_id": 0,
+        "signing_email": "",
+        "uuid": ""
+    }]);
 
     let api_signatures_expiring_soon = getApiSignaturesExpiringSoonUrl(host, token)
     let api_ranking_of_top_accounts_with_expired_signatures = getApiRankingOfTopAccountsWithExpiredSignaturesUrl(host, token, date_from, date_to)
@@ -142,7 +156,8 @@ export default function Dashboard() {
     let api_new_signatures_per_day = getApiNewSignaturesPerDay(host, token, date_from, date_to);
     let api_ten_random_users = getApiTenRandomUsers(host, token);
     let api_user_completeness_of_signatures = getApiUserCompletenessOfSignaturesUrl(host, token, account.account_id);
-    let api_user_status_of_signatures_per_day = getApiUserStatusOfSignaturesPerDay(host, token, account.account_id);
+    let api_user_status_of_signatures_per_day = getApiUserStatusOfSignaturesPerDay(host, token, date_from, date_to, account.account_id);
+    let api_user_feed = getApiUserFeed(host, token, date_from, date_to, account.account_id);
 
     useEffect(() => {
         fetchTinybirdUrl(api_ratio_of_filters, set_ratio_of_filters)
@@ -171,6 +186,9 @@ export default function Dashboard() {
     useEffect(() => {
         fetchTinybirdUrl(api_user_status_of_signatures_per_day, setUserStatusOfSignaturesPerDay)
     }, [api_user_status_of_signatures_per_day]);
+    useEffect(() => {
+        fetchTinybirdUrl(api_user_feed, setUserFeed)
+    }, [api_user_feed]);
 
     return (
         <>
@@ -367,7 +385,7 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    <Col numColSpan={1} numColSpanLg={3}>
+                    {/* <Col numColSpan={1} numColSpanLg={3}>
                         <Card>
                             <Title>Status of your signatures per day</Title>
                             <BarChart
@@ -379,9 +397,9 @@ export default function Dashboard() {
                                 valueFormatter={numberDataFormatter}
                             />
                         </Card>
-                    </Col >
+                    </Col > */}
 
-                    <Col numColSpan={1} numColSpanLg={1}>
+                    {/* <Col numColSpan={1} numColSpanLg={1}>
                         <Card className="mt-6">
                             <Title>Status of your signatures</Title>
 
@@ -398,9 +416,25 @@ export default function Dashboard() {
                                 ))}
                             </List>
                         </Card>
+                    </Col> */}
+                    <Col numColSpan={4} numColSpanLg={4}>
+                        <Card className="mt-6">
+                            <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
+                                {user_feed.map((item) => (
+                                    <Card key={item.uuid}>
+                                        <Flex alignItems="start">
+                                            <Text>{item.signing_status} by: {item.signing_email}</Text>
+                                            <Text className="truncate">{item.signature_id}</Text>
+                                            <Badge size="sm">{item.signatureType}</Badge>
+                                        </Flex>
+                                    </Card>
+                                ))}
+                            </Grid>
+                        </Card>
                     </Col>
 
                 </Grid>
+
 
             </main >
         </>
