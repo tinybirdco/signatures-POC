@@ -33,7 +33,7 @@ SQL >
 
 
 
-NODE endpoint_
+NODE endpoint
 SQL >
 
     %
@@ -42,17 +42,3 @@ SQL >
        total as value
     FROM endpoint s
     left join organizations o on s.account_id = o.org_id
-    LIMIT {{Int8(limit, 6, description="The number of rows accounts to retrieve", required=False)}}
-
-
-
-NODE endpoint
-SQL >
-
-    SELECT
-       organization, 
-       total
-    FROM retrieve s
-    left join organizations o on s.account_id = o.org_id
-
-
