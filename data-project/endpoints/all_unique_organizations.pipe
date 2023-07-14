@@ -1,8 +1,9 @@
-NODE untitled_pipe_3908_0
+NODE endpoint
 SQL >
 
     SELECT
         organization,
+        account_id AS org_id,
         MINSimpleState(person) AS owner,
         MINSimpleState(created_on) AS org_created_date
     FROM
@@ -16,10 +17,12 @@ SQL >
         FROM accounts
     ) AS subquery
     WHERE subquery.rn = 1
-    GROUP BY organization
+    GROUP BY
+        organization,
+        org_id
 
 TYPE materialized
-DATASOURCE organizations_mv
+DATASOURCE organizations
 ENGINE "AggregatingMergeTree"
-ENGINE_SORTING_KEY "organization"
+ENGINE_SORTING_KEY "organization, org_id"
 

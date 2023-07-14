@@ -2,8 +2,9 @@
 
 SCHEMA >
     `organization` String,
+    `org_id` Int32,
     `owner` SimpleAggregateFunction(min, String),
-    `org_created_date` SimpleAggregateFunction(min, DateTime64(3))
+    `org_created_date` SimpleAggregateFunction(min, Date)
 
 ENGINE "AggregatingMergeTree"
-ENGINE_SORTING_KEY "organization"
+ENGINE_SORTING_KEY "organization, org_id"

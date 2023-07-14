@@ -13,6 +13,7 @@ import {
     Grid,
     DonutChart,
     LineChart,
+    Metric,
     DateRangePicker,
     Legend,
     ProgressBar,
@@ -39,6 +40,7 @@ import {
     getApiNewSignaturesPerDay,
     getApiUserStatusOfSignaturesPerDay,
     getApiTenRandomUsers,
+    getApiUserFeed,
     handleInputTokenChange,
     percentageFormatter,
     numberDataFormatter,
@@ -49,25 +51,21 @@ const TINYBIRD_TOKEN = process.env.NEXT_PUBLIC_TINYBIRD_TOKEN;
 
 export default function Dashboard() {
 
-    const [dates_ratio_graph, setDatesRatioGraph] = useState({
-        from: new Date(2023, 5, 1),
-        to: new Date()
-    });
-    const [dates_new_signatures_graph, setDatesNewSignatureGraph] = useState({
+    const [dates, setDates] = useState({
         from: new Date(2023, 5, 1),
         to: new Date()
     });
 
     let defaultDate = new Date(2023, 5, 1);
-    let date_from_ratio_graph = getDateOrDefault(dates_ratio_graph.from, defaultDate);
-    let date_to_ratio_graph = getNextDay(dates_ratio_graph.to) || date_from_ratio_graph;
-    let dates_from_new_signatures_graph = getDateOrDefault(dates_new_signatures_graph.from, defaultDate);
-    let dates_to_new_signatures_graph = getNextDay(dates_new_signatures_graph.to) || dates_from_new_signatures_graph;
+    let defaultAccountID = 52860;
+    let defaultOrganization = "Nike";
+    let date_from = getDateOrDefault(dates.from, defaultDate);
+    let date_to = getNextDay(dates.to) || date_from;
 
     const [token, setToken] = useState(TINYBIRD_TOKEN || '');
     const [host, setHost] = useState(TINYBIRD_HOST || 'api.tinybird.co');
     const [account, setAccount] = useState({
-        "account_id": 94757,
+        "account_id": defaultAccountID,
         "organization": "",
         "certified_SMS": 0,
         "certified_email": 0,
@@ -107,11 +105,12 @@ export default function Dashboard() {
         "qualified": 0
     }]);
     const [newSignaturesPerDay, setNewSignaturesPerDay] = useState([{
-        "day": "",
-        "new_signatures": 0
-    }]);
+        "date": "",
+        "current_period_signatures": 0,
+        "prev_period_signatures": 0
+    },]);
     const [tenRandomUsers, setTenRandomUsers] = useState([{
-        "account_id": 94757,
+        "account_id": defaultAccountID,
         "organization": "",
         "certified_SMS": 0,
         "certified_email": 0,
@@ -136,16 +135,29 @@ export default function Dashboard() {
         "status": "",
         "status_Count": 0
     }]);
+    const [user_feed, setUserFeed] = useState([{
+        "signature_id": "",
+        "signatureType": "",
+        "signature_created_on": "",
+        "since": "",
+        "until": "",
+        "signing_status": "",
+        "signing_timestamp": 0,
+        "signing_account_id": 0,
+        "signing_email": "",
+        "uuid": ""
+    }]);
 
     let api_signatures_expiring_soon = getApiSignaturesExpiringSoonUrl(host, token)
-    let api_ranking_of_top_accounts_with_expired_signatures = getApiRankingOfTopAccountsWithExpiredSignaturesUrl(host, token)
-    let api_ranking_of_top_accounts_creating_signatures = getApiRankingOfTopAccountsCreatingSignaturesUrl(host, token)
-    let api_total_signatures_per_month = getApiTotalSignaturesPerMonthUrl(host, token);
-    let api_ratio_of_filters = getApiRatioOfFiltersUrl(host, token, date_from_ratio_graph, date_to_ratio_graph);
-    let api_new_signatures_per_day = getApiNewSignaturesPerDay(host, token, dates_from_new_signatures_graph, dates_to_new_signatures_graph);
+    let api_ranking_of_top_accounts_with_expired_signatures = getApiRankingOfTopAccountsWithExpiredSignaturesUrl(host, token, date_from, date_to)
+    let api_ranking_of_top_accounts_creating_signatures = getApiRankingOfTopAccountsCreatingSignaturesUrl(host, token, date_from, date_to)
+    let api_total_signatures_per_month = getApiTotalSignaturesPerMonthUrl(host, token, date_from, date_to);
+    let api_ratio_of_filters = getApiRatioOfFiltersUrl(host, token, date_from, date_to);
+    let api_new_signatures_per_day = getApiNewSignaturesPerDay(host, token, date_from, date_to);
     let api_ten_random_users = getApiTenRandomUsers(host, token);
     let api_user_completeness_of_signatures = getApiUserCompletenessOfSignaturesUrl(host, token, account.account_id);
-    let api_user_status_of_signatures_per_day = getApiUserStatusOfSignaturesPerDay(host, token, account.account_id);
+    let api_user_status_of_signatures_per_day = getApiUserStatusOfSignaturesPerDay(host, token, date_from, date_to, account.account_id);
+    let api_user_feed = getApiUserFeed(host, token, date_from, date_to, account.account_id);
 
     useEffect(() => {
         fetchTinybirdUrl(api_ratio_of_filters, set_ratio_of_filters)
@@ -158,10 +170,10 @@ export default function Dashboard() {
     }, []);
     useEffect(() => {
         fetchTinybirdUrl(api_ranking_of_top_accounts_creating_signatures, setTopAccounts)
-    }, []);
+    }, [api_ranking_of_top_accounts_creating_signatures]);
     useEffect(() => {
         fetchTinybirdUrl(api_total_signatures_per_month, setTotalSignaturesPerMonth)
-    }, []);
+    }, [api_total_signatures_per_month]);
     useEffect(() => {
         fetchTinybirdUrl(api_new_signatures_per_day, setNewSignaturesPerDay)
     }, [api_new_signatures_per_day]);
@@ -174,6 +186,9 @@ export default function Dashboard() {
     useEffect(() => {
         fetchTinybirdUrl(api_user_status_of_signatures_per_day, setUserStatusOfSignaturesPerDay)
     }, [api_user_status_of_signatures_per_day]);
+    useEffect(() => {
+        fetchTinybirdUrl(api_user_feed, setUserFeed)
+    }, [api_user_feed]);
 
     return (
         <>
@@ -198,9 +213,24 @@ export default function Dashboard() {
                             <Title>Internal Signaturit Admin Dashboard</Title>
                         </Card>
                     </Col >
+
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card>
-                            <Title>Total number of signatures per month</Title>
+                            <DateRangePicker
+                                value={dates}
+                                onValueChange={setDates}
+                                enableYearPagination={false}
+                                dropdownPlaceholder="Pick dates"
+                                className="mt-2 mt-auto"
+                                enableSelect={true}
+                            />
+                        </Card>
+                    </Col >
+
+
+                    <Col numColSpan={1} numColSpanLg={4}>
+                        <Card>
+                            <Title>Total number of signatures compared to the previous month</Title>
                             <BarChart
                                 className="mt-6"
                                 data={total_signatures_per_month}
@@ -215,7 +245,7 @@ export default function Dashboard() {
                         </Card>
                     </Col >
 
-                    <Col numColSpan={1} numColSpanLg={3}>
+                    <Col numColSpan={1} numColSpanLg={2}>
                         <Card>
                             <Title>Top accounts creating signatures</Title>
                             <Subtitle>
@@ -230,7 +260,6 @@ export default function Dashboard() {
                                 valueFormatter={numberDataFormatter}
                                 yAxisWidth={48}
                                 showXAxis={true}
-
                             />
                         </Card>
                     </Col >
@@ -258,10 +287,10 @@ export default function Dashboard() {
                     </Col>
 
                     <Col numColSpan={1} numColSpanLg={1}>
-                        <Card>
+                        <Card className='container mx-auto'>
                             <Title>Ratio of signatures by Date</Title>
                             <DonutChart
-                                className="mt-8"
+                                className="mt-2"
                                 label="status"
                                 data={ratio_of_filters}
                                 category="percentage"
@@ -270,17 +299,9 @@ export default function Dashboard() {
                                 colors={["amber", "indigo", "rose", "cyan", "slate", "violet", "indigo", "amber", "cyan",]}
                             />
                             <Legend
-                                className="mt-3"
+                                className="mt-2"
                                 categories={["in_queue", "ready", "signing", "completed", "expired", "canceled", "declined", "error"]}
                                 colors={["amber", "indigo", "rose", "cyan", "slate", "violet", "indigo", "amber", "cyan"]}
-                            />
-                            <DateRangePicker
-                                value={dates_ratio_graph}
-                                onValueChange={setDatesRatioGraph}
-                                enableYearPagination={false}
-                                dropdownPlaceholder="Pick dates"
-                                className="mt-2 mt-auto"
-                                enableSelect={true}
                             />
                         </Card>
                     </Col>
@@ -306,19 +327,11 @@ export default function Dashboard() {
                             <LineChart
                                 className="mt-6"
                                 data={newSignaturesPerDay}
-                                index="day"
-                                categories={["new_signatures"]}
-                                colors={["emerald"]}
+                                index="date"
+                                categories={["current_period_signatures", "prev_period_signatures"]}
+                                colors={["blue", "red"]}
                                 valueFormatter={numberDataFormatter}
                                 yAxisWidth={40}
-                            />
-                            <DateRangePicker
-                                value={dates_ratio_graph}
-                                onValueChange={setDatesNewSignatureGraph}
-                                enableYearPagination={false}
-                                dropdownPlaceholder="Pick dates"
-                                className="mt-2 mt-auto"
-                                enableSelect={true}
                             />
                         </Card>
                     </Col>
@@ -342,6 +355,8 @@ export default function Dashboard() {
                             <Select
                                 value={account}
                                 onValueChange={(value) => setAccount(value)}
+                                defaultValue={defaultAccountID}
+                                placeholder={defaultOrganization}
                             >
                                 {tenRandomUsers.map((account) => (
                                     <SelectItem key={account.account_id}
@@ -370,7 +385,7 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    <Col numColSpan={1} numColSpanLg={3}>
+                    {/* <Col numColSpan={1} numColSpanLg={3}>
                         <Card>
                             <Title>Status of your signatures per day</Title>
                             <BarChart
@@ -382,9 +397,9 @@ export default function Dashboard() {
                                 valueFormatter={numberDataFormatter}
                             />
                         </Card>
-                    </Col >
+                    </Col > */}
 
-                    <Col numColSpan={1} numColSpanLg={1}>
+                    {/* <Col numColSpan={1} numColSpanLg={1}>
                         <Card className="mt-6">
                             <Title>Status of your signatures</Title>
 
@@ -401,9 +416,25 @@ export default function Dashboard() {
                                 ))}
                             </List>
                         </Card>
+                    </Col> */}
+                    <Col numColSpan={4} numColSpanLg={4}>
+                        <Card className="mt-6">
+                            <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
+                                {user_feed.map((item) => (
+                                    <Card key={item.uuid}>
+                                        <Flex alignItems="start">
+                                            <Text>{item.signing_status} by: {item.signing_email}</Text>
+                                            <Text className="truncate">{item.signature_id}</Text>
+                                            <Badge size="sm">{item.signatureType}</Badge>
+                                        </Flex>
+                                    </Card>
+                                ))}
+                            </Grid>
+                        </Card>
                     </Col>
 
                 </Grid>
+
 
             </main >
         </>

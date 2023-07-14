@@ -3,7 +3,7 @@ SCHEMA >
     `account_id` Int32 `json:$.account_id`,
     `certified_SMS` UInt8 `json:$.certified_SMS`,
     `certified_email` UInt8 `json:$.certified_email`,
-    `created_on` DateTime64(3) `json:$.created_on`,
+    `created_on` Date `json:$.created_on`,
     `email` String `json:$.email`,
     `organization` String `json:$.organization`,
     `person` String `json:$.person`,

@@ -22,26 +22,27 @@ SQL >
         created_on
         BETWEEN {{
             Date(
-                start_date,
+                date_from,
                 '2023-01-01',
                 description="Initial date",
                 required=True,
             )
         }}
-        AND {{ Date(end_date, '2024-01-01', description="End date", required=True) }}
+        AND {{ Date(date_to, '2024-01-01', description="End date", required=True) }}
     group by account_id
     having total > 0
     order by total desc
 
 
 
-NODE endpoint
+NODE endpoint_
 SQL >
 
     SELECT
        organization, 
-       total
-    FROM retrieve_signatures s
+       total as total_signatures
+    FROM endpoint s
     left join organizations o on s.account_id = o.org_id
+    LIMIT 10
 
 

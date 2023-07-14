@@ -13,7 +13,7 @@ SQL >
     SELECT 
       signature_id, 
       account_id, 
-      until 
+      until,
     FROM 
       signatures 
     WHERE 
