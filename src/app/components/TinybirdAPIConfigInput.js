@@ -1,5 +1,5 @@
 import { Card, Text, TextInput, Title, Grid, Col, Select, SelectItem } from '@tremor/react';
-import { KeyIcon, GlobeAmericasIcon } from '@heroicons/react/24/solid';
+import { GlobeAmericasIcon } from '@heroicons/react/24/solid';
 
 
 export default function TinybirdAPIConfigInput({ token, host, setHost, setToken }) {

@@ -1,0 +1,13 @@
+TOKEN "ingestion_rate_per_second_endpoint_read_9476" READ
+
+NODE endpoint
+SQL >
+
+    SELECT 
+      COUNT(*) / 60.0 AS rate_per_second
+    FROM 
+      signatures
+    WHERE 
+      timestamp >= toUnixTimestamp(now()) * 1000 - 60000
+
+

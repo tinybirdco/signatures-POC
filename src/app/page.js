@@ -13,10 +13,8 @@ import {
     Grid,
     DonutChart,
     LineChart,
-    Metric,
     DateRangePicker,
     Legend,
-    ProgressBar,
     Subtitle,
     Select,
     SelectItem,
@@ -30,21 +28,25 @@ import TinybirdAPIConfigInput from './components/TinybirdAPIConfigInput';
 import {
     getDateOrDefault,
     getNextDay,
+    handleInputTokenChange,
+    percentageFormatter,
+    numberDataFormatter,
+} from './utils';
+import {
     fetchTinybirdUrl,
     getApiRatioOfFiltersUrl,
     getApiSignaturesExpiringSoonUrl,
     getApiRankingOfTopAccountsWithExpiredSignaturesUrl,
-    getApiRankingOfTopAccountsCreatingSignaturesUrl,
-    getApiTotalSignaturesPerMonthUrl,
     getApiUserCompletenessOfSignaturesUrl,
     getApiNewSignaturesPerDay,
     getApiUserStatusOfSignaturesPerDay,
     getApiTenRandomUsers,
     getApiUserFeed,
-    handleInputTokenChange,
-    percentageFormatter,
-    numberDataFormatter,
-} from './utils';
+} from './services/apiService';
+import IngestionRate from './components/IngestionRate';
+import TotalSignaturesPerMonth from './components/TotalSignaturesPerMonth';
+import TopAccountsCreatingSignatures from './components/TopAccountsCreatingSignatures';
+import UserFeed from './components/UserFeed';
 
 const TINYBIRD_HOST = process.env.NEXT_PUBLIC_TINYBIRD_HOST;
 const TINYBIRD_TOKEN = process.env.NEXT_PUBLIC_TINYBIRD_TOKEN;
@@ -92,18 +94,6 @@ export default function Dashboard() {
         "organization": "",
         "value": 0,
     }]);
-    const [ranking_of_top_accounts_creating_signatures, setTopAccounts] = useState([{
-        "organization": "",
-        "account_id": '',
-        "total_signatures": 0,
-    }]);
-    const [total_signatures_per_month, setTotalSignaturesPerMonth] = useState([{
-        "month": "",
-        "simple": 0,
-        "advance(biometrics)": 0,
-        "advance(digital certificate)": 0,
-        "qualified": 0
-    }]);
     const [newSignaturesPerDay, setNewSignaturesPerDay] = useState([{
         "date": "",
         "current_period_signatures": 0,
@@ -123,41 +113,12 @@ export default function Dashboard() {
         "status": "",
         "timestamp": 0
     }]);
-    const [userCompletnessOfSignatures, setUserCompletenessOfSignatures] = useState([{
-        "account_id": 0,
-        "signature_id": "",
-        "status": "",
-        "percentage_complete": 0,
-        "color": 'grey',
-    }]);
-    const [userStatusOfSignaturesPerDay, setUserStatusOfSignaturesPerDay] = useState([{
-        "day": "",
-        "status": "",
-        "status_Count": 0
-    }]);
-    const [user_feed, setUserFeed] = useState([{
-        "signature_id": "",
-        "signatureType": "",
-        "signature_created_on": "",
-        "since": "",
-        "until": "",
-        "signing_status": "",
-        "signing_timestamp": 0,
-        "signing_account_id": 0,
-        "signing_email": "",
-        "uuid": ""
-    }]);
 
     let api_signatures_expiring_soon = getApiSignaturesExpiringSoonUrl(host, token)
     let api_ranking_of_top_accounts_with_expired_signatures = getApiRankingOfTopAccountsWithExpiredSignaturesUrl(host, token, date_from, date_to)
-    let api_ranking_of_top_accounts_creating_signatures = getApiRankingOfTopAccountsCreatingSignaturesUrl(host, token, date_from, date_to)
-    let api_total_signatures_per_month = getApiTotalSignaturesPerMonthUrl(host, token, date_from, date_to);
     let api_ratio_of_filters = getApiRatioOfFiltersUrl(host, token, date_from, date_to);
     let api_new_signatures_per_day = getApiNewSignaturesPerDay(host, token, date_from, date_to);
     let api_ten_random_users = getApiTenRandomUsers(host, token);
-    let api_user_completeness_of_signatures = getApiUserCompletenessOfSignaturesUrl(host, token, account.account_id);
-    let api_user_status_of_signatures_per_day = getApiUserStatusOfSignaturesPerDay(host, token, date_from, date_to, account.account_id);
-    let api_user_feed = getApiUserFeed(host, token, date_from, date_to, account.account_id);
 
     useEffect(() => {
         fetchTinybirdUrl(api_ratio_of_filters, set_ratio_of_filters)
@@ -169,26 +130,12 @@ export default function Dashboard() {
         fetchTinybirdUrl(api_ranking_of_top_accounts_with_expired_signatures, setTopExpiringAccounts)
     }, []);
     useEffect(() => {
-        fetchTinybirdUrl(api_ranking_of_top_accounts_creating_signatures, setTopAccounts)
-    }, [api_ranking_of_top_accounts_creating_signatures]);
-    useEffect(() => {
-        fetchTinybirdUrl(api_total_signatures_per_month, setTotalSignaturesPerMonth)
-    }, [api_total_signatures_per_month]);
-    useEffect(() => {
         fetchTinybirdUrl(api_new_signatures_per_day, setNewSignaturesPerDay)
     }, [api_new_signatures_per_day]);
     useEffect(() => {
         fetchTinybirdUrl(api_ten_random_users, setTenRandomUsers)
     }, []);
-    useEffect(() => {
-        fetchTinybirdUrl(api_user_completeness_of_signatures, setUserCompletenessOfSignatures)
-    }, [api_user_completeness_of_signatures]);
-    useEffect(() => {
-        fetchTinybirdUrl(api_user_status_of_signatures_per_day, setUserStatusOfSignaturesPerDay)
-    }, [api_user_status_of_signatures_per_day]);
-    useEffect(() => {
-        fetchTinybirdUrl(api_user_feed, setUserFeed)
-    }, [api_user_feed]);
+
 
     return (
         <>
@@ -206,11 +153,18 @@ export default function Dashboard() {
                 <Divider />
 
                 <Grid
-                    numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
+                    numItems={1}
+                    numItemsSm={1}
+                    numItemsLg={4}
+                    className="gap-2"
                 >
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card>
                             <Title>Internal Signaturit Admin Dashboard</Title>
+                            Ingestion rate is <IngestionRate
+                                token={token}
+                                host={host}
+                            />
                         </Card>
                     </Col >
 
@@ -227,42 +181,27 @@ export default function Dashboard() {
                         </Card>
                     </Col >
 
-
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card>
-                            <Title>Total number of signatures compared to the previous month</Title>
-                            <BarChart
+                            <Title>New Signatures Per Day</Title>
+                            <LineChart
                                 className="mt-6"
-                                data={total_signatures_per_month}
-                                index="month"
-                                categories={["simple", "advance(biometrics)", "advance(digital certificate)", "qualified"]}
-                                colors={["blue", "red", "amber", "indigo", "rose", "cyan"]}
+                                data={newSignaturesPerDay}
+                                index="date"
+                                categories={["current_period_signatures", "prev_period_signatures"]}
+                                colors={["blue", "slate"]}
                                 valueFormatter={numberDataFormatter}
-                                yAxisWidth={48}
-                                showXAxis={true}
-                                autoMinValue={true}
+                                yAxisWidth={40}
                             />
                         </Card>
-                    </Col >
+                    </Col>
 
-                    <Col numColSpan={1} numColSpanLg={2}>
-                        <Card>
-                            <Title>Top accounts creating signatures</Title>
-                            <Subtitle>
-                                Ranked from highest to lowest
-                            </Subtitle>
-                            <BarChart
-                                className="mt-6"
-                                data={ranking_of_top_accounts_creating_signatures}
-                                index="organization"
-                                categories={["total_signatures"]}
-                                colors={["blue", "red"]}
-                                valueFormatter={numberDataFormatter}
-                                yAxisWidth={48}
-                                showXAxis={true}
-                            />
-                        </Card>
-                    </Col >
+                    <TopAccountsCreatingSignatures
+                        token={token}
+                        host={host}
+                        date_from={date_from}
+                        date_to={date_to}
+                    />
 
                     <Col numColSpan={1} numColSpanLg={1}>
                         <Card>
@@ -309,7 +248,6 @@ export default function Dashboard() {
                     <Col numColSpan={1} numColSpanLg={1}>
                         <Card className="mt-6">
                             <Title>Signatures Expiring Soon</Title>
-
                             <List>
                                 {expiring_signatures.map((item) => (
                                     <ListItem key={item.account_id}>
@@ -320,28 +258,23 @@ export default function Dashboard() {
                             </List>
                         </Card>
                     </Col>
-                    <Col numColSpan={1} numColSpanLg={3}>
 
-                        <Card>
-                            <Title>New Signatures Per Day</Title>
-                            <LineChart
-                                className="mt-6"
-                                data={newSignaturesPerDay}
-                                index="date"
-                                categories={["current_period_signatures", "prev_period_signatures"]}
-                                colors={["blue", "red"]}
-                                valueFormatter={numberDataFormatter}
-                                yAxisWidth={40}
-                            />
-                        </Card>
-                    </Col>
+                    <TotalSignaturesPerMonth
+                        token={token}
+                        host={host}
+                        date_from={date_from}
+                        date_to={date_to}
+                    />
 
                 </Grid>
 
                 <Divider />
 
                 <Grid
-                    numItems={1} numItemsSm={1} numItemsLg={4} className="gap-2"
+                    numItems={1}
+                    numItemsSm={1}
+                    numItemsLg={4}
+                    className="gap-2"
                 >
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card>
@@ -373,7 +306,7 @@ export default function Dashboard() {
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card >
                             <Text>Account Info</Text>
-                            <Flex justifyContent="right" alignItems="center">
+                            <Flex justifyContent="start" alignItems="baseline" className="truncate space-x-3">
                                 <Badge size="md">Org Owner: {account.person}</Badge>
                                 <Badge size="md">Organization: {account.organization}</Badge>
                                 <Badge size="md">Account #: {account.account_id}</Badge>
@@ -385,56 +318,17 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    {/* <Col numColSpan={1} numColSpanLg={3}>
-                        <Card>
-                            <Title>Status of your signatures per day</Title>
-                            <BarChart
-                                className="mt-6"
-                                data={userStatusOfSignaturesPerDay}
-                                index="day"
-                                categories={["in_queue", "ready", "signing", "completed", "expired", "canceled", "declined", "error"]}
-                                colors={["blue", "red", "amber", "indigo", "rose", "cyan"]}
-                                valueFormatter={numberDataFormatter}
-                            />
-                        </Card>
-                    </Col > */}
-
-                    {/* <Col numColSpan={1} numColSpanLg={1}>
-                        <Card className="mt-6">
-                            <Title>Status of your signatures</Title>
-
-                            <List>
-                                {userCompletnessOfSignatures.map((item) => (
-                                    <Card className="mt-6" key={item.signature_id}>
-                                        <Flex>
-                                            <Text>{item.percentage_complete}%</Text>
-                                            <Text>{(item.signature_id).substring(0, 7)}</Text>
-                                            <Text>{item.status}</Text>
-                                        </Flex>
-                                        <ProgressBar value={item.percentage_complete} color={item.color} className="mt-3" />
-                                    </Card>
-                                ))}
-                            </List>
-                        </Card>
-                    </Col> */}
-                    <Col numColSpan={4} numColSpanLg={4}>
-                        <Card className="mt-6">
-                            <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
-                                {user_feed.map((item) => (
-                                    <Card key={item.uuid}>
-                                        <Flex alignItems="start">
-                                            <Text>{item.signing_status} by: {item.signing_email}</Text>
-                                            <Text className="truncate">{item.signature_id}</Text>
-                                            <Badge size="sm">{item.signatureType}</Badge>
-                                        </Flex>
-                                    </Card>
-                                ))}
-                            </Grid>
-                        </Card>
-                    </Col>
-
                 </Grid>
 
+                <Divider />
+
+                <UserFeed
+                    account={account}
+                    token={token}
+                    host={host}
+                    date_from={date_from}
+                    date_to={date_to}
+                />
 
             </main >
         </>

@@ -1,0 +1,6 @@
+NODE signatures_pipe_8423_0
+SQL >
+
+    SELECT * FROM signatures
+
+

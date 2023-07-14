@@ -89,11 +89,11 @@ const generateTinybirdPayload = async (token, signatureID, signatureType, since,
     await send_data_to_tinybird("signatures", token, subscriptionPayload);
     console.log('Sending signature data to Tinybird');
 
-    const accountId3 = account_id_list[faker.number.int({ min: 0, max: account_id_list.length - 1 })];
-    created_on = faker.date.soon({ days: 2, refDate: created_on })
-    subscriptionPayload = generateSignaturePayload(accountId3, 'signing', signatureType, signatureID, since, until, created_on);
-    await send_data_to_tinybird("signatures", token, subscriptionPayload);
-    console.log('Sending signature data to Tinybird');
+    // const accountId3 = account_id_list[faker.number.int({ min: 0, max: account_id_list.length - 1 })];
+    // created_on = faker.date.soon({ days: 2, refDate: created_on })
+    // subscriptionPayload = generateSignaturePayload(accountId3, 'signing', signatureType, signatureID, since, until, created_on);
+    // await send_data_to_tinybird("signatures", token, subscriptionPayload);
+    // console.log('Sending signature data to Tinybird');
 
     const finalStatus = faker.helpers.weightedArrayElement([
         { weight: 7.5, value: 'completed' },
