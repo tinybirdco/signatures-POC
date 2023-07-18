@@ -1,7 +1,5 @@
 TOKEN "read_all_pipes_token" READ
 
-TOKEN "new_signatures_per_day_endpoint_read_1543" READ
-
 NODE endpoint
 SQL >
 

@@ -2,8 +2,6 @@ DESCRIPTION >
 	Retrieve the number of accounts based on the status of their signature. Possible status: "in_queue", "ready", "signing", "completed", "expired", "canceled", "declined", "error".
 
 
-TOKEN "emails_of_expired_signatures_endpoint_read_4335" READ
-
 TOKEN "read_all_pipes_token" READ
 
 NODE emails_by_status_signatures_0

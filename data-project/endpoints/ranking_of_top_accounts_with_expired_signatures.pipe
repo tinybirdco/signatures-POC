@@ -2,11 +2,9 @@ DESCRIPTION >
 	Ranking of the top accounts having signatures expired:
 
 
-TOKEN "ranking_of_top_accounts_with_expired_signatures_endpoint_read_4189" READ
-
 TOKEN "read_all_pipes_token" READ
 
-NODE filter
+NODE endpoint
 SQL >
 
     %
@@ -33,15 +31,12 @@ SQL >
 
 
 
-NODE endpoint_
+NODE endpoint
 SQL >
 
     %
     SELECT
        organization as name, 
        total as value
-    FROM filter s
+    FROM endpoint s
     left join organizations o on s.account_id = o.org_id
-    LIMIT {{Int8(limit, 6, description="The number of rows accounts to retrieve", required=False)}}
-
-
