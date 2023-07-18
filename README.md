@@ -17,15 +17,15 @@
 
 Click this button to deploy the data project to Tinybird 👇
 
-[![Deploy to Tinybird](https://cdn.tinybird.co/button)](https://ui.tinybird.co/workspaces/new?name=signaturit_poc)
+[![Deploy to Tinybird](https://cdn.tinybird.co/button)](https://ui.tinybird.co/workspaces/new?name=signatures_poc)
 
 Follow the guided process, and your Tinybird workspace is now ready to start receiving events.
 
 2. Setup this repository locally
 
 ```bash
-git clone https://github.com/tinybirdco/signaturit-poc.git
-cd signaturit-poc
+git clone https://github.com/tinybirdco/signatures-POC.git
+cd signatures-POC
 ```
 
 3. Install dependencies
