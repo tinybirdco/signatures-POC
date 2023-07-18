@@ -62,6 +62,8 @@ Go to your [Tinybird workspace](https://ui.tinybird.co) and check the data is fl
 
 Go to the `all_unique_organizations` pipe in your Tinybird workspace and click the dropdown carrot button next to "Create API Endpoint, and select "Create Materialized View". This will create the `organizations` materialized view data source in your workspace.
 
+![image](https://github.com/tinybirdco/signatures-POC/assets/4650739/4ab179f7-e9de-45d9-8f02-61f455352ab0)
+
 7. Copy the environment variables to .env
 
 Locally, be sure to paste the admin token from Step 3 into the `.env` file.
