@@ -2,8 +2,6 @@ DESCRIPTION >
 	Query to retrieve the active signatures with their respective start and end dates when the status is one of the following: "in_queue", "ready", "signing"
 
 
-TOKEN "active_signatures_endpoint_read_1015" READ
-
 TOKEN "read_all_pipes_token" READ
 
 NODE endpoint

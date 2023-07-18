@@ -2,7 +2,6 @@ DESCRIPTION >
 	Count the number of signatures per account in descending order (from highest to lowest)
 
 
-TOKEN "num_of_signatures_per_account_endpoint_read_2149" READ
 
 TOKEN "read_all_pipes_token" READ
 

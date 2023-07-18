@@ -4,8 +4,6 @@ DESCRIPTION >
 
 TOKEN "read_all_pipes_token" READ
 
-TOKEN "user_completeness_of_signatures_endpoint_read_9361" READ
-
 NODE endpoint
 SQL >
 
