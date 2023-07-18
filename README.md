@@ -58,8 +58,6 @@ Go to your [Tinybird workspace](https://ui.tinybird.co) and check the data is fl
 
 Be sure to paste the token from Step 3 into the `.env` file.
 
-```bash
-
 1. Run the Dashboard locally
 
 ```bash
