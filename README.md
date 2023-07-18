@@ -6,6 +6,8 @@
 
  This repository is dedicated to generating dummy data and a sample dashboard that mirrors a company that manages digital document signatures in real-time. This tool is particularly useful for testing and development purposes.
 
+ ![screenshot of Signatures Dashboard](https://github.com/tinybirdco/signatures-POC/assets/4650739/6187241a-b811-42fa-99f2-4d2d17e9aa81)
+
 ## Setup
 
 ### Requirements
