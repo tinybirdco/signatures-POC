@@ -4,7 +4,7 @@
 
 # Signatures POC
 
-This repository is dedicated to generating dummy data that mirrors the schema and behavior of the Signaturit API. It is currently set up to stream data through the event API, but it can be easily reconfigured to utilize Kafka. This tool is particularly useful for testing and development purposes.
+ This repository is dedicated to generating dummy data and a sample dashboard that mirrors a company that manages digital document signatures in real-time. This tool is particularly useful for testing and development purposes.
 
 ## Setup
 
