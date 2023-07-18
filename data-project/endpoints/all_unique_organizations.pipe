@@ -21,8 +21,4 @@ SQL >
         organization,
         org_id
 
-TYPE materialized
-DATASOURCE organizations
-ENGINE "AggregatingMergeTree"
-ENGINE_SORTING_KEY "organization, org_id"
 
