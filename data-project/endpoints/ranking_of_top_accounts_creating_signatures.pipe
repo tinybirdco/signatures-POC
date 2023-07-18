@@ -2,7 +2,6 @@ DESCRIPTION >
 	Ranking of the top accounts creating signatures
 
 
-TOKEN "ranking_of_top_accounts_creating_signatures_endpoint_read_4001" READ
 
 TOKEN "read_all_pipes_token" READ
 

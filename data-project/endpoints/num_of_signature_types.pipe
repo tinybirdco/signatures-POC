@@ -2,8 +2,6 @@ DESCRIPTION >
 	Retrieve the signature types and their counts:
 
 
-TOKEN "num_of_signature_types_endpoint_read_5348" READ
-
 TOKEN "read_all_pipes_token" READ
 
 NODE endpoint

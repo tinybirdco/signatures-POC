@@ -2,8 +2,6 @@ DESCRIPTION >
 	Total number of signatures along time comparing with the previous period
 
 
-TOKEN "total_signatures_per_month_endpoint_read_0437" READ
-
 NODE data
 DESCRIPTION >
     Total number of signatures along time
