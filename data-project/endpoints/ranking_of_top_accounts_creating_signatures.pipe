@@ -6,7 +6,7 @@ TOKEN "ranking_of_top_accounts_creating_signatures_endpoint_read_4001" READ
 
 TOKEN "read_all_pipes_token" READ
 
-NODE endpoint
+NODE retrieve_signatures
 SQL >
 
     %
@@ -32,10 +32,11 @@ SQL >
     group by account_id
     having total > 0
     order by total desc
+    LIMIT {{Int8(limit, 6, description="The number of rows accounts to retrieve", required=False)}}
 
 
 
-NODE endpoint_
+NODE endpoint
 SQL >
 
     SELECT
@@ -43,6 +44,5 @@ SQL >
        total as total_signatures
     FROM endpoint s
     left join organizations o on s.account_id = o.org_id
-    LIMIT 10
 
 
