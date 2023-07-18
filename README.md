@@ -30,11 +30,13 @@ cd signatures-POC
 
 3. Install dependencies
 
-This script will automatically install and configure the `tinybird-cli` for this project.
-
 ```bash
 npm install
 ```
+
+4. Setup Tinybird CLI
+
+The install script above will automatically install and configure the `tinybird-cli` for this project.
 
 Choose your region: 1 for `us-east`, 2 for `eu`. A new `.tinyb` file will be created.tb
 
@@ -42,9 +44,9 @@ Go to [https://ui.tinybird.co/tokens](https://ui.tinybird.co/tokens) and copy th
 
 ⚠️Warning! The Admin token, the one you copied following this guide, is your admin token. Don't share it or publish it in your application. You can manage your tokens via API or using the Auth Tokens section in the UI. More detailed info at [Auth Tokens management](https://www.tinybird.co/docs/api-reference/token-api.html)
 
-This will also push the data project to your Tinybird workspace.
+This script will also push the data project to your Tinybird workspace.
 
-4. Start generating data!
+5. Start generating data!
 
 In the terminal, run the following command:
 
@@ -54,17 +56,21 @@ npm run seed
 
 Go to your [Tinybird workspace](https://ui.tinybird.co) and check the data is flowing.
 
-5. Copy the environment variables to .env
+6. Setup the `organizations` materialized view
 
-Be sure to paste the token from Step 3 into the `.env` file.
+Go to the `all_unique_organizations` pipe in your Tinybird workspace and click the dropdown carrot button next to "Create API Endpoint, and select "Create Materialized View". This will create the `organizations` materialized view data source in your workspace.
 
-1. Run the Dashboard locally
+7. Copy the environment variables to .env
+
+Locally, be sure to paste the admin token from Step 3 into the `.env` file.
+
+8. Run the Dashboard locally
 
 ```bash
 npm run dev
 ```
 
-7. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+9. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ### License
 
