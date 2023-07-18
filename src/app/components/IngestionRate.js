@@ -23,11 +23,9 @@ const IngestionRate = ({ token, host }) => {
     }, []); // only re-run effect if component re-renders
 
     return (
-
         <Badge>
             {ingestedSignaturesPerSec[0].rate_per_second} signatures per second
         </Badge>
-
     );
 };
 

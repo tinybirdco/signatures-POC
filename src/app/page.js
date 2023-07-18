@@ -2,7 +2,6 @@
 
 import {
     Badge,
-    BarChart,
     BarList,
     Bold,
     Card,
@@ -37,11 +36,8 @@ import {
     getApiRatioOfFiltersUrl,
     getApiSignaturesExpiringSoonUrl,
     getApiRankingOfTopAccountsWithExpiredSignaturesUrl,
-    getApiUserCompletenessOfSignaturesUrl,
     getApiNewSignaturesPerDay,
-    getApiUserStatusOfSignaturesPerDay,
     getApiTenRandomUsers,
-    getApiUserFeed,
 } from './services/apiService';
 import IngestionRate from './components/IngestionRate';
 import TotalSignaturesPerMonth from './components/TotalSignaturesPerMonth';
@@ -136,11 +132,10 @@ export default function Dashboard() {
         fetchTinybirdUrl(api_ten_random_users, setTenRandomUsers)
     }, []);
 
-
     return (
         <>
             <Head>
-                <title>Signaturit POC</title>
+                <title>Signatures POC</title>
             </Head>
             <main className="bg-slate-50 p-6 sm:p-10">
                 <TinybirdAPIConfigInput
@@ -160,7 +155,7 @@ export default function Dashboard() {
                 >
                     <Col numColSpan={1} numColSpanLg={4}>
                         <Card>
-                            <Title>Internal Signaturit Admin Dashboard</Title>
+                            <Title>Internal Admin Dashboard</Title>
                             Ingestion rate is <IngestionRate
                                 token={token}
                                 host={host}

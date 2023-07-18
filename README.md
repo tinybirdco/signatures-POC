@@ -2,7 +2,7 @@
   <a href="https://www.tinybird.co/join-our-slack-community"><img alt="Slack Status" src="https://img.shields.io/badge/slack-chat-1FCC83?style=flat&logo=slack"></a>
 </p>
 
-# Signturit POC
+# Signatures POC
 
 This repository is dedicated to generating dummy data that mirrors the schema and behavior of the Signaturit API. It is currently set up to stream data through the event API, but it can be easily reconfigured to utilize Kafka. This tool is particularly useful for testing and development purposes.
 
